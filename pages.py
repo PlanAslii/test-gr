@@ -8,11 +8,13 @@ LOGIN_HTML = r"""<!DOCTYPE html>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ورود · OXNET</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
+  --font:"Vazirmatn", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
   --bg:#f4f1ec;
   --bg-deep:#ebe6de;
   --card:#fffcf8;
@@ -44,8 +46,9 @@ LOGIN_HTML = r"""<!DOCTYPE html>
   }
 }
 html,body{height:100%}
+html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
 body{
-  font-family:'Vazirmatn',system-ui,sans-serif;
+  font-family:var(--font);
   background:var(--bg);
   color:var(--ink);
   min-height:100vh;
@@ -55,6 +58,9 @@ body{
   padding:24px;
   position:relative;
   overflow:hidden;
+  line-height:1.65;
+  font-weight:400;
+  letter-spacing:-.01em;
 }
 .stage{
   position:fixed;inset:0;pointer-events:none;z-index:0;
@@ -190,6 +196,7 @@ DASHBOARD_HTML = r"""<!DOCTYPE html>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
+  --font:"Vazirmatn", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
   --bg:#f3efe8;
   --bg2:#faf7f2;
   --bg3:#ebe4da;
@@ -246,7 +253,7 @@ DASHBOARD_HTML = r"""<!DOCTYPE html>
   --shadow:0 18px 40px rgba(0,0,0,0.35);
 }
 html,body{height:100%}
-body{font-family:'Vazirmatn',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;font-size:14px;transition:background .3s,color .3s}
+body{font-family:var(--font,"Vazirmatn",system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif);background:var(--bg);color:var(--t1);min-height:100vh;display:flex;font-size:14.5px;line-height:1.65;font-weight:400;letter-spacing:-.01em;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;transition:background .3s,color .3s}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}
@@ -1097,6 +1104,17 @@ a{color:inherit;text-decoration:none}
 
 <style id="oxnet-dashboard-redesign">
 /* OXNET Quiet Luxury redesign — soft stone, slate accent, no neon */
+/* Typography polish */
+body, button, input, select, textarea { font-family: var(--font, "Vazirmatn", system-ui, sans-serif) !important; }
+h1,h2,h3,.tb-title,.sub-name,.brand-name,.logo-text,.stat-val,.cfg-label,.card-title{
+  font-feature-settings: "ss01" on, "kern" on;
+  letter-spacing: -0.025em !important;
+}
+.nav-it, .btn, .btn-p, .btn-g, label, .stat-label, .tb-sub {
+  letter-spacing: -0.01em;
+}
+p, .cl, .sub-desc { line-height: 1.75 !important; }
+
 body{
   background:
     radial-gradient(1200px 600px at 100% 0%, rgba(61,79,95,.05), transparent 55%),
@@ -3241,128 +3259,99 @@ async function startUpdate(){
 
 def get_public_page_html(uuid_key: str) -> str:
     """صفحه پابلیک ساب — طراحی آرام و مدرن (بدون نئون)"""
-    return f"""<!DOCTYPE html>
+    html = r"""<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>اشتراک · OXNET</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
-*{{margin:0;padding:0;box-sizing:border-box}}
-:root{{
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
   --bg:#f3efe8; --card:#fffcf8; --ink:#1c1917; --muted:#78716c;
   --line:rgba(28,25,23,.08); --accent:#3d4f5f; --accent-soft:rgba(61,79,95,.08);
   --ok:#3f6f5a; --ok-bg:rgba(63,111,90,.1); --err:#9b4d3c; --err-bg:rgba(155,77,60,.1);
   --shadow:0 18px 40px rgba(28,25,23,.06); --radius:18px;
-}}
-@media (prefers-color-scheme: dark){{
-  :root{{
+  --font:"Vazirmatn", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{
     --bg:#12100e; --card:#1c1917; --ink:#f5f0ea; --muted:#a8a29e;
     --line:rgba(245,240,234,.08); --accent:#c4b5a5; --accent-soft:rgba(196,181,165,.1);
     --ok:#7d9f8a; --ok-bg:rgba(125,159,138,.12); --err:#d4a59a; --err-bg:rgba(212,165,154,.12);
     --shadow:0 18px 40px rgba(0,0,0,.35);
-  }}
-}}
-body{{
-  font-family:'Vazirmatn',system-ui,sans-serif;background:var(--bg);color:var(--ink);
-  min-height:100vh;padding:28px 16px 48px;
+  }
+}
+html{font-size:15px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+body{
+  font-family:var(--font);background:var(--bg);color:var(--ink);
+  min-height:100vh;padding:28px 16px 48px;line-height:1.65;font-weight:400;
   background-image:
     radial-gradient(900px 420px at 10% 0%, rgba(61,79,95,.05), transparent 55%),
     radial-gradient(700px 380px at 100% 100%, rgba(63,111,90,.05), transparent 50%);
-}}
-.shell{{max-width:720px;margin:0 auto}}
-.top{{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  margin-bottom:22px;flex-wrap:wrap;
-}}
-.brand{{display:flex;align-items:center;gap:12px}}
-.brand-mark{{
-  width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;
-  background:var(--accent);color:#faf7f2;font-size:18px;
-}}
-.brand-name{{font-weight:700;font-size:16px;letter-spacing:-.02em}}
-.brand-sub{{font-size:11.5px;color:var(--muted);margin-top:2px}}
-.pill{{
-  font-size:11px;font-weight:600;color:var(--muted);background:var(--card);
-  border:1px solid var(--line);border-radius:999px;padding:7px 12px;
-}}
-.card{{
-  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-  box-shadow:var(--shadow);padding:22px;margin-bottom:14px;
-}}
-.sub-eyebrow{{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px}}
-.sub-name{{font-size:24px;font-weight:700;letter-spacing:-.03em;margin-bottom:6px}}
-.sub-desc{{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:10px}}
-.sub-meta-row{{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:6px;margin-bottom:14px}}
-.sub-sub-box{{
-  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-  background:var(--accent-soft);border:1px solid var(--line);border-radius:14px;padding:10px 12px;
-}}
-.sub-sub-url{{flex:1;min-width:160px;font-size:12px;color:var(--muted);direction:ltr;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
-.btn{{
-  border:none;border-radius:12px;padding:9px 14px;font-family:inherit;font-size:12px;font-weight:600;
-  cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:transform .15s, opacity .15s;
-}}
-.btn:hover{{transform:translateY(-1px)}}
-.btn-pur{{background:var(--accent);color:#faf7f2}}
-.btn-g{{background:transparent;border:1px solid var(--line);color:var(--ink)}}
-.copy-all-bar{{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
-  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-  box-shadow:var(--shadow);padding:16px 18px;margin-bottom:12px;
-}}
-.copy-all-title{{font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:6px}}
-.copy-all-sub{{font-size:11px;color:var(--muted);margin-top:3px}}
-.copy-all-btn{{
-  background:var(--accent);color:#faf7f2;border:none;border-radius:12px;padding:10px 16px;
-  font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;
-}}
-.stats-bar{{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}}
-.stat-card{{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow)}}
-.stat-label{{font-size:11px;color:var(--muted);font-weight:600}}
-.stat-val{{font-size:20px;font-weight:700;letter-spacing:-.03em;margin-top:4px}}
-.stat-sub{{font-size:11px;color:var(--muted);margin-top:4px}}
-.cfg-title{{font-size:12px;font-weight:700;color:var(--muted);margin:18px 0 10px;display:flex;align-items:center;gap:6px;letter-spacing:.04em;text-transform:uppercase}}
-.cfg-grid{{display:grid;gap:12px}}
-.cfg-card{{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}}
-.cfg-top{{padding:16px 16px 12px;position:relative}}
-.cfg-top::after{{content:'';position:absolute;top:0;right:0;width:3px;height:100%;background:var(--ok)}}
-.cfg-card.inactive .cfg-top::after{{background:var(--err)}}
-.cfg-head{{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;flex-wrap:wrap;margin-bottom:10px}}
-.cfg-label{{font-size:14.5px;font-weight:700}}
-.cfg-badges{{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}}
-.proto-chip{{font-size:10px;padding:3px 8px;border-radius:999px;font-weight:600;background:var(--accent-soft);color:var(--accent)}}
-.cfg-status{{font-size:10px;font-weight:600;padding:4px 10px;border-radius:999px}}
-.cfg-status.ok{{background:var(--ok-bg);color:var(--ok)}}
-.cfg-status.no{{background:var(--err-bg);color:var(--err)}}
-.ubar{{height:6px;border-radius:99px;background:rgba(28,25,23,.06);overflow:hidden;margin-bottom:5px}}
-.ubar-f{{height:100%;border-radius:99px;background:var(--accent)}}
-.utxt{{font-size:10.5px;color:var(--muted);display:flex;justify-content:space-between}}
-.cfg-actions{{display:flex;gap:8px;flex-wrap:wrap;padding:0 16px 16px}}
-.foot{{text-align:center;margin-top:22px;font-size:11.5px;color:var(--muted)}}
-.lock-wrap{{max-width:420px;margin:12vh auto 0;text-align:center}}
-.lock-wrap h1{{font-size:24px;font-weight:700;margin:14px 0 8px;letter-spacing:-.03em}}
-.lock-wrap p{{color:var(--muted);font-size:13.5px;line-height:1.7;margin-bottom:18px}}
-.lock-wrap input{{
-  width:100%;height:48px;border-radius:12px;border:1px solid var(--line);background:var(--card);
-  padding:0 14px;font-family:inherit;font-size:14px;color:var(--ink);margin-bottom:10px;outline:none;
-}}
-.lock-wrap input:focus{{box-shadow:0 0 0 4px var(--accent-soft);border-color:rgba(61,79,95,.3)}}
-.toast{{
-  position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);
-  background:var(--ink);color:#faf7f2;padding:10px 16px;border-radius:999px;font-size:12.5px;font-weight:600;
-  opacity:0;pointer-events:none;transition:.25s;z-index:50;
-}}
-.toast.show{{opacity:1;transform:translateX(-50%) translateY(0)}}
-.qr-modal{{position:fixed;inset:0;background:rgba(28,25,23,.45);display:none;align-items:center;justify-content:center;z-index:60;padding:20px}}
-.qr-modal.on{{display:flex}}
-.qr-box{{background:var(--card);border-radius:20px;padding:22px;width:min(340px,100%);text-align:center;border:1px solid var(--line)}}
-.qr-box h3{{margin-bottom:12px;font-size:15px}}
-.dot{{width:7px;height:7px;border-radius:50%;background:var(--ok);display:inline-block}}
-.empty{{text-align:center;padding:40px 16px;color:var(--muted)}}
-@media(max-width:640px){{.stats-bar{{grid-template-columns:1fr}}}}
+}
+.shell{max-width:720px;margin:0 auto}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-mark{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;background:var(--accent);color:#faf7f2;font-size:18px}
+.brand-name{font-weight:700;font-size:1.05rem;letter-spacing:-.02em}
+.brand-sub{font-size:.78rem;color:var(--muted);margin-top:2px;font-weight:500}
+.pill{font-size:.72rem;font-weight:600;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin-bottom:14px}
+.sub-eyebrow{font-size:.72rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.sub-name{font-size:1.55rem;font-weight:700;letter-spacing:-.03em;margin-bottom:6px;line-height:1.35}
+.sub-desc{font-size:.9rem;color:var(--muted);line-height:1.75;margin-bottom:10px;font-weight:400}
+.sub-meta-row{font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:6px;margin-bottom:14px;font-weight:500}
+.sub-sub-box{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--accent-soft);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.sub-sub-url{flex:1;min-width:160px;font-size:.8rem;color:var(--muted);direction:ltr;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.btn{border:none;border-radius:12px;padding:9px 14px;font-family:inherit;font-size:.8rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:transform .15s, opacity .15s;letter-spacing:-.01em}
+.btn:hover{transform:translateY(-1px)}
+.btn-pur{background:var(--accent);color:#faf7f2}
+.btn-g{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.copy-all-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 18px;margin-bottom:12px}
+.copy-all-title{font-size:.9rem;font-weight:700;display:flex;align-items:center;gap:6px;letter-spacing:-.015em}
+.copy-all-sub{font-size:.75rem;color:var(--muted);margin-top:3px;font-weight:500}
+.copy-all-btn{background:var(--accent);color:#faf7f2;border:none;border-radius:12px;padding:10px 16px;font-family:inherit;font-size:.8rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.stat-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow)}
+.stat-label{font-size:.72rem;color:var(--muted);font-weight:600}
+.stat-val{font-size:1.35rem;font-weight:700;letter-spacing:-.03em;margin-top:4px;line-height:1.2}
+.stat-sub{font-size:.72rem;color:var(--muted);margin-top:4px;font-weight:500}
+.cfg-title{font-size:.75rem;font-weight:700;color:var(--muted);margin:18px 0 10px;display:flex;align-items:center;gap:6px;letter-spacing:.04em;text-transform:uppercase}
+.cfg-grid{display:grid;gap:12px}
+.cfg-card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+.cfg-top{padding:16px 16px 12px;position:relative}
+.cfg-top::after{content:'';position:absolute;top:0;right:0;width:3px;height:100%;background:var(--ok)}
+.cfg-card.inactive .cfg-top::after{background:var(--err)}
+.cfg-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;flex-wrap:wrap;margin-bottom:10px}
+.cfg-label{font-size:.95rem;font-weight:700;letter-spacing:-.02em}
+.cfg-badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.proto-chip{font-size:.68rem;padding:3px 8px;border-radius:999px;font-weight:600;background:var(--accent-soft);color:var(--accent)}
+.cfg-status{font-size:.68rem;font-weight:600;padding:4px 10px;border-radius:999px}
+.cfg-status.ok{background:var(--ok-bg);color:var(--ok)}
+.cfg-status.no{background:var(--err-bg);color:var(--err)}
+.ubar{height:6px;border-radius:99px;background:rgba(28,25,23,.06);overflow:hidden;margin-bottom:5px}
+.ubar-f{height:100%;border-radius:99px;background:var(--accent)}
+.utxt{font-size:.72rem;color:var(--muted);display:flex;justify-content:space-between;font-weight:500}
+.cfg-actions{display:flex;gap:8px;flex-wrap:wrap;padding:0 16px 16px}
+.foot{text-align:center;margin-top:22px;font-size:.75rem;color:var(--muted);font-weight:500}
+.lock-wrap{max-width:420px;margin:12vh auto 0;text-align:center}
+.lock-wrap h1{font-size:1.5rem;font-weight:700;margin:14px 0 8px;letter-spacing:-.03em}
+.lock-wrap p{color:var(--muted);font-size:.9rem;line-height:1.75;margin-bottom:18px}
+.lock-wrap input{width:100%;height:48px;border-radius:12px;border:1px solid var(--line);background:var(--card);padding:0 14px;font-family:inherit;font-size:.92rem;color:var(--ink);margin-bottom:10px;outline:none}
+.lock-wrap input:focus{box-shadow:0 0 0 4px var(--accent-soft);border-color:rgba(61,79,95,.3)}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#faf7f2;padding:10px 16px;border-radius:999px;font-size:.82rem;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:50}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.qr-modal{position:fixed;inset:0;background:rgba(28,25,23,.45);display:none;align-items:center;justify-content:center;z-index:60;padding:20px}
+.qr-modal.on{display:flex}
+.qr-box{background:var(--card);border-radius:20px;padding:22px;width:min(340px,100%);text-align:center;border:1px solid var(--line)}
+.qr-box h3{margin-bottom:12px;font-size:1rem;font-weight:700}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ok);display:inline-block}
+.empty{text-align:center;padding:40px 16px;color:var(--muted);font-weight:500}
+@media(max-width:640px){.stats-bar{grid-template-columns:1fr} body{padding:18px 12px 36px} .sub-name{font-size:1.3rem}}
 </style>
 </head>
 <body>
@@ -3390,126 +3379,127 @@ body{{
 <div class="toast" id="toast"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-const UUID_KEY = "{uuid_key}";
+const UUID_KEY = "__UUID_KEY__";
 const PW_KEY = "oxnet_pw_" + UUID_KEY;
-function esc(s){{return String(s??'').replace(/[&<>"']/g,m=>({{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}})[m]);}}
-function toFa(n){{return String(n).replace(/\\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);}}
-function toast(msg){{
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]);}
+function toFa(n){return String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);}
+function toast(msg){
   const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2200);
-}}
-function showQR(title, text){{
+}
+function showQR(title, text){
   document.getElementById('qr-title').textContent = title || 'QR';
   const box=document.getElementById('qr-box'); box.innerHTML='';
-  try{{ new QRCode(box, {{text, width:180, height:180, correctLevel: QRCode.CorrectLevel.M}}); }}catch(e){{}}
+  try{ new QRCode(box, {text, width:180, height:180, correctLevel: QRCode.CorrectLevel.M}); }catch(e){}
   document.getElementById('qr-modal').classList.add('on');
-}}
-function copyAllConfigs(){{
+}
+function copyAllConfigs(){
   const lines=(window._oxnetLinks||[]).filter(l=>l.vless).map(l=>l.vless);
-  if(!lines.length){{toast('کانفیگ فعالی نیست');return;}}
-  navigator.clipboard.writeText(lines.join('\\n')).then(()=>toast('همه کانفیگ‌ها کپی شد'));
-}}
-function renderLocked(name){{
+  if(!lines.length){toast('کانفیگ فعالی نیست');return;}
+  navigator.clipboard.writeText(lines.join('\n')).then(()=>toast('همه کانفیگ‌ها کپی شد'));
+}
+function renderLocked(name){
   document.getElementById('live-pill').textContent = 'محافظت‌شده';
   document.getElementById('root').innerHTML = `
     <div class="card lock-wrap">
       <div class="brand-mark" style="margin:0 auto"><i class="ti ti-lock"></i></div>
-      <h1>${{esc(name||'گروه خصوصی')}}</h1>
+      <h1>${esc(name||'گروه خصوصی')}</h1>
       <p>برای مشاهده کانفیگ‌ها و لینک اشتراک، رمز صفحه را وارد کنید.</p>
       <input id="pw" type="password" placeholder="رمز صفحه عمومی" autofocus>
       <button class="btn btn-pur" style="width:100%;justify-content:center;height:46px" onclick="unlock()"><i class="ti ti-login-2"></i> ورود</button>
     </div>`;
-  document.getElementById('pw')?.addEventListener('keydown', e=>{{ if(e.key==='Enter') unlock(); }});
-}}
-async function unlock(){{
+  document.getElementById('pw')?.addEventListener('keydown', e=>{ if(e.key==='Enter') unlock(); });
+}
+async function unlock(){
   const pw = document.getElementById('pw')?.value || '';
   localStorage.setItem(PW_KEY, pw);
   await load();
-}}
-async function load(){{
+}
+async function load(){
   const savedPw = localStorage.getItem(PW_KEY) || '';
   const url = '/api/public/sub/' + UUID_KEY + (savedPw ? ('?pw=' + encodeURIComponent(savedPw)) : '');
-  try{{
+  try{
     const r = await fetch(url);
     const d = await r.json();
-    if(d.locked){{ renderLocked(d.name); return; }}
+    if(d.locked){ renderLocked(d.name); return; }
     document.getElementById('live-pill').innerHTML = '<span class="dot"></span>&nbsp; آنلاین';
     const activeCount = (d.links||[]).filter(l=>l.active).length;
     const baseSubUrl = d.sub_url || (window.location.protocol + '//' + window.location.host + '/sub-group/' + UUID_KEY);
     const subUrl = baseSubUrl + (savedPw ? '?pw=' + encodeURIComponent(savedPw) : '');
     window._oxnetSubUrl = subUrl;
     window._oxnetSubName = d.name;
-    window._oxnetLinks = (d.links||[]).map(l => ({{
+    window._oxnetLinks = (d.links||[]).map(l => ({
       vless: l.vless_link, sub: (l.sub_url||'') + (savedPw ? '?pw=' + encodeURIComponent(savedPw) : ''), label: l.label
-    }}));
-    window._oxnetCfSubs = (d.cloudflare_subs||[]).map(c => ({{...c, sub_url: c.sub_url + (savedPw ? '?pw=' + encodeURIComponent(savedPw) : '')}}));
-    const ds = d.domain_subs || {{}};
+    }));
+    window._oxnetCfSubs = (d.cloudflare_subs||[]).map(c => ({...c, sub_url: c.sub_url + (savedPw ? '?pw=' + encodeURIComponent(savedPw) : '')}));
+    const ds = d.domain_subs || {};
     window._oxnetMainSubUrl = (ds.main_sub_url || '') + (savedPw ? '?pw=' + encodeURIComponent(savedPw) : '');
-    window._oxnetExtraSubs = (ds.extra_subs||[]).map(c => ({{...c, sub_url: c.sub_url + (savedPw ? '?pw=' + encodeURIComponent(savedPw) : '')}}));
+    window._oxnetExtraSubs = (ds.extra_subs||[]).map(c => ({...c, sub_url: c.sub_url + (savedPw ? '?pw=' + encodeURIComponent(savedPw) : '')}));
 
     document.getElementById('root').innerHTML = `
       <div class="card">
         <div class="sub-eyebrow"><i class="ti ti-folders"></i> گروه دسترسی</div>
-        <div class="sub-name">${{esc(d.name)}}</div>
-        ${{d.desc ? `<div class="sub-desc">${{esc(d.desc)}}</div>` : ''}}
-        <div class="sub-meta-row"><i class="ti ti-clock"></i> آخرین بروزرسانی: ${{new Date().toLocaleTimeString('fa-IR')}}</div>
+        <div class="sub-name">${esc(d.name)}</div>
+        ${d.desc ? `<div class="sub-desc">${esc(d.desc)}</div>` : ''}
+        <div class="sub-meta-row"><i class="ti ti-clock"></i> آخرین بروزرسانی: ${new Date().toLocaleTimeString('fa-IR')}</div>
         <div class="sub-sub-box">
-          <span class="sub-sub-url">${{esc(subUrl)}}</span>
+          <span class="sub-sub-url">${esc(subUrl)}</span>
           <button class="btn btn-pur" onclick="navigator.clipboard.writeText(window._oxnetSubUrl).then(()=>toast('لینک ساب کپی شد'))"><i class="ti ti-copy"></i> کپی لینک ساب</button>
           <button class="btn btn-g" onclick="showQR(window._oxnetSubName + ' — کل گروه', window._oxnetSubUrl)"><i class="ti ti-qrcode"></i> QR</button>
         </div>
-        <div style="margin-top:10px;font-size:11.5px;color:var(--muted);line-height:1.7"><i class="ti ti-info-circle"></i> ساب اصلی شامل کانفیگ‌های <b>همه دامنه‌ها</b> است.</div>
+        <div style="margin-top:10px;font-size:12px;color:var(--muted);line-height:1.7"><i class="ti ti-info-circle"></i> ساب اصلی شامل کانفیگ‌های <b>همه دامنه‌ها</b> است.</div>
       </div>
 
-      ${{(d.domain_subs && d.domain_subs.main_sub_url) ? `<div class="copy-all-bar"><div class="copy-all-text"><div class="copy-all-title"><i class="ti ti-world"></i> ساب دامنه اصلی</div><div class="copy-all-sub">فقط دامنه اصلی پنل · ${{esc((d.domain_subs||{{}}).main_domain||'')}}</div></div><button class="copy-all-btn" onclick="navigator.clipboard.writeText(window._oxnetMainSubUrl).then(()=>toast('ساب دامنه اصلی کپی شد'))"><i class="ti ti-world"></i> دامنه اصلی</button></div>` : ''}}
+      ${(d.domain_subs && d.domain_subs.main_sub_url) ? `<div class="copy-all-bar"><div class="copy-all-text"><div class="copy-all-title"><i class="ti ti-world"></i> ساب دامنه اصلی</div><div class="copy-all-sub">فقط دامنه اصلی پنل · ${esc((d.domain_subs||{}).main_domain||'')}</div></div><button class="copy-all-btn" onclick="navigator.clipboard.writeText(window._oxnetMainSubUrl).then(()=>toast('ساب دامنه اصلی کپی شد'))"><i class="ti ti-world"></i> دامنه اصلی</button></div>` : ''}
 
-      ${{((d.domain_subs||{{}}).extra_subs||[]).length ? `<div class="copy-all-bar"><div class="copy-all-text"><div class="copy-all-title"><i class="ti ti-link"></i> ساب‌های دامنه فرعی</div><div class="copy-all-sub">هر دامنه فرعی به‌صورت جدا</div></div><div style="display:flex;gap:8px;flex-wrap:wrap">${{window._oxnetExtraSubs.map(c=>`<button class="copy-all-btn" onclick="navigator.clipboard.writeText('${{esc(c.sub_url)}}').then(()=>toast('ساب دامنه فرعی کپی شد'))"><i class="ti ti-link"></i> ${{esc(c.domain)}}</button>`).join('')}}</div></div>` : ''}}
+      ${((d.domain_subs||{}).extra_subs||[]).length ? `<div class="copy-all-bar"><div class="copy-all-text"><div class="copy-all-title"><i class="ti ti-link"></i> ساب‌های دامنه فرعی</div><div class="copy-all-sub">هر دامنه فرعی به‌صورت جدا</div></div><div style="display:flex;gap:8px;flex-wrap:wrap">${window._oxnetExtraSubs.map(c=>`<button class="copy-all-btn" onclick="navigator.clipboard.writeText('${esc(c.sub_url)}').then(()=>toast('ساب دامنه فرعی کپی شد'))"><i class="ti ti-link"></i> ${esc(c.domain)}</button>`).join('')}</div></div>` : ''}
 
-      ${{(d.cloudflare_subs||[]).length ? `<div class="copy-all-bar"><div class="copy-all-text"><div class="copy-all-title"><i class="ti ti-cloud"></i> ساب‌های Cloudflare</div><div class="copy-all-sub">Host/SNI دامنه Cloudflare و IP تمیز</div></div><div style="display:flex;gap:8px;flex-wrap:wrap">${{window._oxnetCfSubs.map(c=>`<button class="copy-all-btn" onclick="navigator.clipboard.writeText('${{esc(c.sub_url)}}').then(()=>toast('ساب کلادفلیر کپی شد'))"><i class="ti ti-cloud"></i> ${{esc(c.domain)}} · ${{toFa(c.clean_ip_count||0)}} IP</button>`).join('')}}</div></div>` : ''}}
+      ${(d.cloudflare_subs||[]).length ? `<div class="copy-all-bar"><div class="copy-all-text"><div class="copy-all-title"><i class="ti ti-cloud"></i> ساب‌های Cloudflare</div><div class="copy-all-sub">Host/SNI دامنه Cloudflare و IP تمیز</div></div><div style="display:flex;gap:8px;flex-wrap:wrap">${window._oxnetCfSubs.map(c=>`<button class="copy-all-btn" onclick="navigator.clipboard.writeText('${esc(c.sub_url)}').then(()=>toast('ساب کلادفلیر کپی شد'))"><i class="ti ti-cloud"></i> ${esc(c.domain)} · ${toFa(c.clean_ip_count||0)} IP</button>`).join('')}</div></div>` : ''}
 
       <div class="copy-all-bar">
         <div class="copy-all-text">
           <div class="copy-all-title"><i class="ti ti-copy"></i> کپی همه کانفیگ‌ها</div>
           <div class="copy-all-sub">لینک‌های فعال این گروه</div>
         </div>
-        <button class="copy-all-btn" onclick="copyAllConfigs()"><i class="ti ti-clipboard-copy"></i> کپی همه (${{toFa(activeCount)}})</button>
+        <button class="copy-all-btn" onclick="copyAllConfigs()"><i class="ti ti-clipboard-copy"></i> کپی همه (${toFa(activeCount)})</button>
       </div>
 
       <div class="stats-bar">
-        <div class="stat-card"><div class="stat-label">کانفیگ فعال</div><div class="stat-val">${{toFa(activeCount)}}</div><div class="stat-sub">از ${{toFa((d.links||[]).length)}} کانفیگ</div></div>
-        <div class="stat-card"><div class="stat-label">اتصالات زنده</div><div class="stat-val">${{toFa(d.active_connections||0)}}</div><div class="stat-sub" style="display:flex;align-items:center;gap:5px"><span class="dot"></span> آنلاین</div></div>
-        <div class="stat-card"><div class="stat-label">کل مصرف</div><div class="stat-val" style="font-size:16px">${{esc(d.total_used_fmt||'0 B')}}</div></div>
+        <div class="stat-card"><div class="stat-label">کانفیگ فعال</div><div class="stat-val">${toFa(activeCount)}</div><div class="stat-sub">از ${toFa((d.links||[]).length)} کانفیگ</div></div>
+        <div class="stat-card"><div class="stat-label">اتصالات زنده</div><div class="stat-val">${toFa(d.active_connections||0)}</div><div class="stat-sub" style="display:flex;align-items:center;gap:5px"><span class="dot"></span> آنلاین</div></div>
+        <div class="stat-card"><div class="stat-label">کل مصرف</div><div class="stat-val" style="font-size:1.05rem">${esc(d.total_used_fmt||'0 B')}</div></div>
       </div>
 
       <div class="cfg-title"><i class="ti ti-list-details"></i> کانفیگ‌ها</div>
       <div class="cfg-grid">
-        ${{(d.links||[]).map(l=>{{
+        ${(d.links||[]).map(l=>{
           const lim = l.limit_bytes||0; const used=l.used_bytes||0;
           const pct = lim>0 ? Math.min(100, Math.round(used/lim*100)) : 0;
-          return `<div class="cfg-card ${{l.active?'':'inactive'}}">
+          return `<div class="cfg-card ${l.active?'':'inactive'}">
             <div class="cfg-top">
               <div class="cfg-head">
                 <div>
-                  <div class="cfg-label">${{esc(l.label)}}</div>
-                  <div class="cfg-badges"><span class="proto-chip">${{esc(l.protocol||'')}}</span></div>
+                  <div class="cfg-label">${esc(l.label)}</div>
+                  <div class="cfg-badges"><span class="proto-chip">${esc(l.protocol||'')}</span></div>
                 </div>
-                <div class="cfg-status ${{l.active?'ok':'no'}}">${{l.active?'فعال':'غیرفعال'}}</div>
+                <div class="cfg-status ${l.active?'ok':'no'}">${l.active?'فعال':'غیرفعال'}</div>
               </div>
-              <div class="ubar"><div class="ubar-f" style="width:${{pct}}%"></div></div>
-              <div class="utxt"><span>${{esc(l.used_fmt||'0 B')}}</span><span>${{esc(l.limit_fmt||'∞')}}</span></div>
+              <div class="ubar"><div class="ubar-f" style="width:${pct}%"></div></div>
+              <div class="utxt"><span>${esc(l.used_fmt||'0 B')}</span><span>${esc(l.limit_fmt||'∞')}</span></div>
             </div>
             <div class="cfg-actions">
-              <button class="btn btn-pur" onclick="navigator.clipboard.writeText('${{esc(l.vless_link||'')}}').then(()=>toast('لینک کانفیگ کپی شد'))"><i class="ti ti-copy"></i> کپی</button>
-              <button class="btn btn-g" onclick="showQR('${{esc(l.label)}}','${{esc(l.vless_link||'')}}')"><i class="ti ti-qrcode"></i> QR</button>
-              <button class="btn btn-g" onclick="navigator.clipboard.writeText('${{esc((l.sub_url||'') + (savedPw ? ('?pw=' + encodeURIComponent(savedPw)) : ''))}}').then(()=>toast('ساب تکی کپی شد'))"><i class="ti ti-rss"></i> ساب</button>
+              <button class="btn btn-pur" onclick="navigator.clipboard.writeText('${esc(l.vless_link||'')}').then(()=>toast('لینک کانفیگ کپی شد'))"><i class="ti ti-copy"></i> کپی</button>
+              <button class="btn btn-g" onclick="showQR('${esc(l.label)}','${esc(l.vless_link||'')}')"><i class="ti ti-qrcode"></i> QR</button>
+              <button class="btn btn-g" onclick="navigator.clipboard.writeText('${esc((l.sub_url||'') + (savedPw ? ('?pw=' + encodeURIComponent(savedPw)) : ''))}').then(()=>toast('ساب تکی کپی شد'))"><i class="ti ti-rss"></i> ساب</button>
             </div>
           </div>`;
-        }}).join('') || '<div class="empty">کانفیگی در این گروه نیست</div>'}}
+        }).join('') || '<div class="empty">کانفیگی در این گروه نیست</div>'}
       </div>`;
-  }}catch(e){{
+  }catch(e){
     document.getElementById('root').innerHTML = '<div class="empty">خطا در بارگذاری</div>';
-  }}
-}}
+  }
+}
 load();
 </script>
 </body></html>"""
+    return html.replace("__UUID_KEY__", str(uuid_key))
