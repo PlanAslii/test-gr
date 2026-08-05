@@ -1,3 +1,3 @@
-version=2.0.10
-description=Panel main domain setting, extra domains, main sub includes all domains, domain-specific subs
-updated_at=1785750000
+version=2.0.11
+description=Unified slate theme light/dark, dual HTTP80+HTTPS443 share links, cleaner UI
+updated_at=1785753600

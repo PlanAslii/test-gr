@@ -413,59 +413,73 @@ def _uri_authority_host(host: str) -> str:
         return f"[{host}]"
     return host
 
-def generate_share_link(uuid: str, host: str, remark: str = "OXNET", protocol: str = DEFAULT_PROTOCOL, sni_host: str | None = None) -> str:
+def generate_share_link(uuid: str, host: str, remark: str = "OXNET", protocol: str = DEFAULT_PROTOCOL, sni_host: str | None = None, port: int = 443) -> str:
     link_obj = LINKS.get(uuid, {})
     public_path = link_obj.get("path") or uuid
     tls_host = (sni_host or host).strip()
     authority_host = _uri_authority_host(host)
+    # port 80 = plain HTTP / no TLS for clients that support it; 443 = TLS
+    use_tls = int(port) != 80
+    security = "tls" if use_tls else "none"
     if protocol == "shadowsocks-tls":
         import base64
-        # SIP002 plugin form with explicit websocket mode and always a fragment/name.
-        # This fixes links that previously ended as "...?" without plugin/name.
         user = base64.urlsafe_b64encode(f"chacha20-ietf-poly1305:{uuid}".encode()).decode().rstrip("=")
-        plugin = quote(f"v2ray-plugin;tls;mode=websocket;host={tls_host};path=/ss/{public_path}", safe="")
-        return f"ss://{user}@{authority_host}:443?plugin={plugin}#{quote(remark or 'OXNET-Shadowsocks')}"
+        if use_tls:
+            plugin = quote(f"v2ray-plugin;tls;mode=websocket;host={tls_host};path=/ss/{public_path}", safe="")
+        else:
+            plugin = quote(f"v2ray-plugin;mode=websocket;host={tls_host};path=/ss/{public_path}", safe="")
+        tag = remark or "OXNET-Shadowsocks"
+        if not use_tls:
+            tag = f"{tag}-HTTP80"
+        return f"ss://{user}@{authority_host}:{int(port)}?plugin={plugin}#{quote(tag)}"
     if protocol == "mtproto":
         link = LINKS.get(uuid)
-        port = link.get("mtproto_port") if link else None
+        mport = link.get("mtproto_port") if link else None
         secret = link.get("mtproto_secret") if link else None
-        if not port or not secret:
+        if not mport or not secret:
             return f"tg://proxy?server={host}&port=0&secret=not_ready#{quote(remark)}"
         pub_host = link.get("mtproto_public_host") if link else None
         pub_port = link.get("mtproto_public_port") if link else None
         final_host = pub_host or host
-        final_port = pub_port or port
+        final_port = pub_port or mport
         return mtproto.generate_mtproto_link(final_host, final_port, secret)
     if protocol == "trojan-ws":
         params = {
-            "security": "tls", "type": "ws", "host": tls_host,
-            "path": "/trojan-ws", "sni": tls_host, "fp": "chrome", "alpn": "http/1.1",
+            "security": security, "type": "ws", "host": tls_host,
+            "path": "/trojan-ws", "fp": "chrome", "alpn": "http/1.1",
         }
+        if use_tls:
+            params["sni"] = tls_host
         query = "&".join(f"{k}={quote(str(v))}" for k, v in params.items())
-        return f"trojan://{uuid}@{authority_host}:443?{query}#{quote(remark)}"
+        tag = remark if use_tls else f"{remark}-HTTP80"
+        return f"trojan://{uuid}@{authority_host}:{int(port)}?{query}#{quote(tag)}"
     if protocol.startswith("trojan-xhttp-"):
         mode = protocol.replace("trojan-xhttp-", "")
         if mode == "stream-one":
             mode = "stream-up"
         path = f"/xhttp-siz10/{mode}/{public_path}"
         params = {
-            "security": "tls", "type": "xhttp", "mode": mode, "host": tls_host,
-            "path": path, "sni": tls_host, "fp": "chrome", "alpn": "h2,http/1.1",
+            "security": security, "type": "xhttp", "mode": mode, "host": tls_host,
+            "path": path, "fp": "chrome", "alpn": "h2,http/1.1",
         }
+        if use_tls:
+            params["sni"] = tls_host
         query = "&".join(f"{k}={quote(str(v))}" for k, v in params.items())
-        return f"trojan://{uuid}@{authority_host}:443?{query}#{quote(remark)}"
+        tag = remark if use_tls else f"{remark}-HTTP80"
+        return f"trojan://{uuid}@{authority_host}:{int(port)}?{query}#{quote(tag)}"
     if protocol == "vless-ws":
         path = f"/ws/{public_path}"
         params = {
             "encryption": "none",
-            "security": "tls",
+            "security": security,
             "type": "ws",
             "host": tls_host,
             "path": path,
-            "sni": tls_host,
             "fp": "chrome",
             "alpn": "http/1.1",
         }
+        if use_tls:
+            params["sni"] = tls_host
     else:
         mode = protocol.replace("xhttp-", "")
         if mode == "stream-one":
@@ -473,17 +487,19 @@ def generate_share_link(uuid: str, host: str, remark: str = "OXNET", protocol: s
         path = f"/xhttp-siz10/{mode}/{public_path}"
         params = {
             "encryption": "none",
-            "security": "tls",
+            "security": security,
             "type": "xhttp",
             "mode": mode,
             "host": tls_host,
             "path": path,
-            "sni": tls_host,
             "fp": "chrome",
             "alpn": "h2,http/1.1",
         }
+        if use_tls:
+            params["sni"] = tls_host
     query = "&".join(f"{k}={quote(str(v))}" for k, v in params.items())
-    return f"vless://{uuid}@{authority_host}:443?{query}#{quote(remark)}"
+    tag = remark if use_tls else f"{remark}-HTTP80"
+    return f"vless://{uuid}@{authority_host}:{int(port)}?{query}#{quote(tag)}"
 
 def uptime() -> str:
     secs = int(time.time() - stats["start_time"])
@@ -950,16 +966,25 @@ def _find_extra_domain(key: str) -> dict | None:
             return d
     return None
 
+
+def _config_ports_for_proto(proto: str) -> tuple[int, ...]:
+    """HTTPS 443 + HTTP 80 for all tunnel protocols (not MTProto)."""
+    if proto == "mtproto":
+        return ()
+    return (443, 80)
+
 def _share_lines_for_all_domains(uid: str, link: dict, host: str) -> list[str]:
-    """کانفیگ‌های یک لینک برای دامنه اصلی + کلادفلیر + دامنه‌های فرعی."""
+    """کانفیگ‌های یک لینک برای دامنه اصلی + کلادفلیر + دامنه‌های فرعی — هم پورت 443 (HTTPS) و هم 80 (HTTP)."""
     proto = link.get("protocol", DEFAULT_PROTOCOL)
     label = link.get("label", "")
     lines: list[str] = []
     if proto == "mtproto":
         lines.append(generate_share_link(uid, host, remark=f"OXNET-{label}", protocol=proto))
         return lines
+    ports = (443, 80)
     # دامنه اصلی پنل
-    lines.append(generate_share_link(uid, host, remark=f"OXNET-{label}", protocol=proto))
+    for port in ports:
+        lines.append(generate_share_link(uid, host, remark=f"OXNET-{label}", protocol=proto, port=port))
     # دامنه‌های Cloudflare (با IP تمیز یا خود دامنه)
     for cf in _cf_domains():
         domain = cf.get("domain") or ""
@@ -969,14 +994,16 @@ def _share_lines_for_all_domains(uid: str, link: dict, host: str) -> list[str]:
         targets = clean_ips if clean_ips else [domain]
         for target in targets:
             remark = f"OXNET-CF-{domain}-{label}" + (f"-{target}" if clean_ips else "")
-            lines.append(generate_share_link(uid, target, remark=remark, protocol=proto, sni_host=domain))
+            for port in ports:
+                lines.append(generate_share_link(uid, target, remark=remark, protocol=proto, sni_host=domain, port=port))
     # دامنه‌های فرعی
     for ed in _extra_domains():
         domain = ed.get("domain") or ""
         if not domain:
             continue
         remark = f"OXNET-{domain}-{label}"
-        lines.append(generate_share_link(uid, domain, remark=remark, protocol=proto, sni_host=domain))
+        for port in ports:
+            lines.append(generate_share_link(uid, domain, remark=remark, protocol=proto, sni_host=domain, port=port))
     return lines
 
 def domain_sub_urls_for_key(host: str, uuid_key: str) -> dict:
@@ -1067,7 +1094,8 @@ async def cloudflare_subscription(key: str):
             continue
         for target in targets:
             remark = f"OXNET-CF-{domain}-{link.get('label','')}" + (f"-{target}" if clean_ips else "")
-            lines.append(generate_share_link(uid, target, remark=remark, protocol=proto, sni_host=domain))
+            for port in (443, 80):
+                lines.append(generate_share_link(uid, target, remark=remark, protocol=proto, sni_host=domain, port=port))
     content=base64.b64encode("\n".join(lines).encode()).decode()
     return Response(content=content, media_type="text/plain", headers={"profile-title": quote(f"OXNET Cloudflare {domain}")})
 
@@ -1101,7 +1129,8 @@ async def cloudflare_group_subscription(key: str, uuid_key: str, request: Reques
                 continue
             for target in targets:
                 remark=f"OXNET-CF-{domain}-{link.get('label','')}" + (f"-{target}" if clean_ips else "")
-                lines.append(generate_share_link(lid, target, remark=remark, protocol=proto, sni_host=domain))
+                for port in (443, 80):
+                    lines.append(generate_share_link(lid, target, remark=remark, protocol=proto, sni_host=domain, port=port))
     content=base64.b64encode("\n".join(lines).encode()).decode()
     return Response(content=content, media_type="text/plain", headers={"profile-title": quote(f"{sub.get('name','OXNET')} Cloudflare {domain}")})
 
@@ -1171,7 +1200,8 @@ async def domain_sub_main(uuid_key: str, request: Request):
             link = LINKS.get(lid)
             if link and is_link_allowed(link):
                 proto = link.get("protocol", DEFAULT_PROTOCOL)
-                lines.append(generate_share_link(lid, host, remark=f"OXNET-{link['label']}", protocol=proto))
+                for port in (443, 80):
+                    lines.append(generate_share_link(lid, host, remark=f"OXNET-{link['label']}", protocol=proto, port=port))
     content = base64.b64encode("\n".join(lines).encode()).decode()
     return Response(content=content, media_type="text/plain", headers={
         "profile-title": quote(f"{sub.get('name','OXNET')} Main"),
@@ -1196,7 +1226,8 @@ async def domain_sub_extra_all(key: str):
         proto = link.get("protocol", DEFAULT_PROTOCOL)
         if proto == "mtproto":
             continue
-        lines.append(generate_share_link(uid, domain, remark=f"OXNET-{domain}-{link.get('label','')}", protocol=proto, sni_host=domain))
+        for port in (443, 80):
+            lines.append(generate_share_link(uid, domain, remark=f"OXNET-{domain}-{link.get('label','')}", protocol=proto, sni_host=domain, port=port))
     content = base64.b64encode("\n".join(lines).encode()).decode()
     return Response(content=content, media_type="text/plain", headers={"profile-title": quote(f"OXNET {domain}")})
 
@@ -1225,7 +1256,8 @@ async def domain_sub_extra_group(key: str, uuid_key: str, request: Request):
             proto = link.get("protocol", DEFAULT_PROTOCOL)
             if proto == "mtproto":
                 continue
-            lines.append(generate_share_link(lid, domain, remark=f"OXNET-{domain}-{link.get('label','')}", protocol=proto, sni_host=domain))
+            for port in (443, 80):
+                lines.append(generate_share_link(lid, domain, remark=f"OXNET-{domain}-{link.get('label','')}", protocol=proto, sni_host=domain, port=port))
     content = base64.b64encode("\n".join(lines).encode()).decode()
     return Response(content=content, media_type="text/plain", headers={
         "profile-title": quote(f"{sub.get('name','OXNET')} {domain}"),
@@ -1845,7 +1877,7 @@ from pages import LOGIN_HTML, DASHBOARD_HTML
 
 def render_html(html: str) -> str:
     v = get_current_panel_version()
-    return html.replace("v1.0.0", f"v{v}").replace("v1.1.0", f"v{v}").replace("v1.2.0", f"v{v}").replace("v1.2.1", f"v{v}").replace("v2.0.0", f"v{v}").replace("v2.0.1", f"v{v}").replace("v2.0.2", f"v{v}").replace("v2.0.3", f"v{v}").replace("v2.0.4", f"v{v}").replace("v2.0.5", f"v{v}").replace("v2.0.6", f"v{v}").replace("v2.0.7", f"v{v}").replace("v2.0.8", f"v{v}").replace("v2.0.9", f"v{v}").replace("v2.0.10", f"v{v}").replace("· 1.0.0", f"· {v}").replace("· 1.1.0", f"· {v}").replace("· 1.2.0", f"· {v}").replace("· 1.2.1", f"· {v}").replace("· 2.0.0", f"· {v}").replace("· 2.0.1", f"· {v}").replace("· 2.0.2", f"· {v}").replace("· 2.0.3", f"· {v}").replace("· 2.0.4", f"· {v}").replace("· 2.0.5", f"· {v}").replace("· 2.0.6", f"· {v}").replace("· 2.0.7", f"· {v}").replace("· 2.0.8", f"· {v}").replace("· 2.0.9", f"· {v}").replace("· 2.0.10", f"· {v}")
+    return html.replace("v1.0.0", f"v{v}").replace("v1.1.0", f"v{v}").replace("v1.2.0", f"v{v}").replace("v1.2.1", f"v{v}").replace("v2.0.0", f"v{v}").replace("v2.0.1", f"v{v}").replace("v2.0.2", f"v{v}").replace("v2.0.3", f"v{v}").replace("v2.0.4", f"v{v}").replace("v2.0.5", f"v{v}").replace("v2.0.6", f"v{v}").replace("v2.0.7", f"v{v}").replace("v2.0.8", f"v{v}").replace("v2.0.9", f"v{v}").replace("v2.0.10", f"v{v}").replace("v2.0.11", f"v{v}").replace("· 1.0.0", f"· {v}").replace("· 1.1.0", f"· {v}").replace("· 1.2.0", f"· {v}").replace("· 1.2.1", f"· {v}").replace("· 2.0.0", f"· {v}").replace("· 2.0.1", f"· {v}").replace("· 2.0.2", f"· {v}").replace("· 2.0.3", f"· {v}").replace("· 2.0.4", f"· {v}").replace("· 2.0.5", f"· {v}").replace("· 2.0.6", f"· {v}").replace("· 2.0.7", f"· {v}").replace("· 2.0.8", f"· {v}").replace("· 2.0.9", f"· {v}").replace("· 2.0.10", f"· {v}").replace("· 2.0.11", f"· {v}")
 
 
 # ── Central: Announcements & Support ─────────────────────────────────────────
