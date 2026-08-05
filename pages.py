@@ -5,6 +5,7 @@
 LOGIN_HTML = r"""<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
+<script>(function(){try{var t=localStorage.getItem("oxnet-theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ورود · OXNET</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,6 +32,20 @@ LOGIN_HTML = r"""<!DOCTYPE html>
     --ok:#22C55E; --err:#EF4444; --err-bg:rgba(239,68,68,.12);
     --shadow:0 8px 24px rgba(0,0,0,.35);
   }
+}
+html[data-theme="light"]{
+  --bg:#F8FAFC; --bg2:#EEF2F7; --card:#FFFFFF;
+  --ink:#111827; --muted:#6B7280; --line:#E5E7EB;
+  --accent:#2563EB; --accent-hover:#1D4ED8; --accent-soft:rgba(37,99,235,.08);
+  --ok:#16A34A; --err:#DC2626; --err-bg:rgba(220,38,38,.08);
+  --shadow:0 8px 20px rgba(15,23,42,.05);
+}
+html[data-theme="dark"]{
+  --bg:#0B1220; --bg2:#111827; --card:#111827;
+  --ink:#F8FAFC; --muted:#CBD5E1; --line:#334155;
+  --accent:#3B82F6; --accent-hover:#60A5FA; --accent-soft:rgba(59,130,246,.12);
+  --ok:#22C55E; --err:#EF4444; --err-bg:rgba(239,68,68,.12);
+  --shadow:0 8px 24px rgba(0,0,0,.35);
 }
 html,body{height:100%}
 body{
@@ -2338,6 +2353,17 @@ body{
         <button class="btn btn-p btn-sm" onclick="savePanelDomain()"><i class="ti ti-device-floppy"></i> ذخیره دامنه اصلی</button>
       </div>
     </div>
+
+    <div class="card" style="margin-top:16px">
+      <div class="card-title"><i class="ti ti-shield-lock"></i> مسیر مخفی ورود</div>
+      <div class="cl" style="margin-bottom:12px"><i class="ti ti-info-circle"></i><span>با تنظیم مسیر سفارشی، ورود فقط از <b dir="ltr">/{path}/login</b> ممکن است و <b dir="ltr">/login</b> خطای ۴۰۴ می‌دهد. حداقل ۴ کاراکتر انگلیسی یا عدد.</span></div>
+      <div class="fg"><label>مسیر ورود</label><input class="fi" id="panel-login-path" dir="ltr" placeholder="lkjsoijefief" style="width:100%"></div>
+      <div class="cl" style="margin-top:10px"><i class="ti ti-link"></i><span>آدرس فعلی: <b dir="ltr" id="panel-login-url">/login</b></span></div>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-p btn-sm" type="button" onclick="saveLoginPath()"><i class="ti ti-device-floppy"></i> ذخیره مسیر ورود</button>
+        <button class="btn btn-o btn-sm" type="button" onclick="clearLoginPath()"><i class="ti ti-refresh"></i> بازگشت به /login</button>
+      </div>
+    </div>
     <div class="pw-panel">
       <div class="pw-hero">
         <div class="pw-hero-icon"><i class="ti ti-key"></i></div>
@@ -2449,15 +2475,15 @@ function protoBadge(p){
   const v=PROTO_MAP[p]||['ناشناخته','pc-ws'];
   return `<span class="proto-chip ${v[1]}">${v[0]}</span>`;
 }
-async function checkAuth(){try{const r=await fetch('/api/me');const d=await r.json();if(!d.authenticated)location.href='/login';}catch(e){location.href='/login'}}
-async function logout(){try{await fetch('/api/logout',{method:'POST'})}catch(e){}location.href='/login'}
+async function checkAuth(){try{const r=await fetch('/api/me');const d=await r.json();if(!d.authenticated)location.href=(function(){try{return localStorage.getItem('oxnet-login-url')||'/login'}catch(e){return '/login'}})();}catch(e){location.href=(function(){try{return localStorage.getItem('oxnet-login-url')||'/login'}catch(e){return '/login'}})()}}
+async function logout(){try{await fetch('/api/logout',{method:'POST'})}catch(e){}var u='/login';try{u=localStorage.getItem('oxnet-login-url')||'/login'}catch(e){}location.href=u}
 document.getElementById('logout-btn').addEventListener('click',logout);
 async function authF(url,opts={}){
   opts = opts || {};
   if(!opts.credentials) opts.credentials='same-origin';
   try{
     const r=await fetch(url,opts);
-    if(r.status===401){location.href='/login';throw new Error('unauthorized')}
+    if(r.status===401){location.href=(function(){try{return localStorage.getItem('oxnet-login-url')||'/login'}catch(e){return '/login'}})();throw new Error('unauthorized')}
     return r;
   }catch(e){
     console.error('fetch failed', url, e);
@@ -3247,6 +3273,35 @@ async function loadPanelDomain(){
     if(sh) sh.textContent=d.host||location.host;
   }catch(e){console.error(e)}
 }
+
+async function loadLoginPathSettings(d){
+  try{
+    if(!d){const r=await authF('/api/settings'); d=await r.json();}
+    const path=(d.login_path || (d.settings&&d.settings.panel&&d.settings.panel.login_path) || '');
+    const url=d.login_url || (path?('/'+path+'/login'):'/login');
+    const inp=document.getElementById('panel-login-path');
+    if(inp) inp.value=path||'';
+    const u=document.getElementById('panel-login-url');
+    if(u) u.textContent=url;
+    try{localStorage.setItem('oxnet-login-url', url);}catch(e){}
+  }catch(e){}
+}
+async function saveLoginPath(){
+  const login_path=(document.getElementById('panel-login-path').value||'').trim();
+  try{
+    const r=await authF('/api/settings',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({panel:{login_path}})});
+    const d=await r.json();
+    if(!r.ok) throw new Error((d.detail&&(d.detail.message||d.detail))||'خطا');
+    await loadLoginPathSettings(d);
+    toast('مسیر ورود ذخیره شد: '+(d.login_url||'/login'),'ok');
+  }catch(e){toast(String(e.message||e),'err')}
+}
+async function clearLoginPath(){
+  const inp=document.getElementById('panel-login-path');
+  if(inp) inp.value='';
+  await saveLoginPath();
+}
+
 async function savePanelDomain(){
   const domain=(document.getElementById('panel-domain').value||'').trim();
   try{

@@ -100,7 +100,7 @@ async def load_state():
             CUSTOMERS.update(data.get("customers", {}))
             SETTINGS.update(data.get("settings", {}))
             SETTINGS.setdefault("cloudflare", {"domains": []})
-            SETTINGS.setdefault("panel", {"domain": ""})
+            SETTINGS.setdefault("panel", {"domain": "", "login_path": ""})
             SETTINGS.setdefault("extra_domains", [])
             if "password_hash" in data:
                 AUTH["password_hash"] = data["password_hash"]
@@ -142,7 +142,7 @@ SETTINGS: dict = {
     "theme": {"accent": "#2563EB", "radius": 16, "density": "comfortable", "mode": "light"},
     "security": {"lockout_enabled": True, "max_attempts": 5, "lock_minutes": 10, "allowed_ips": []},
     "cleanup": {"auto_delete_expired_days": 0, "inactive_archive_days": 0, "log_keep": 150, "low_resource": False},
-    "panel": {"domain": ""},
+    "panel": {"domain": "", "login_path": ""},
     "cloudflare": {"domains": []},
     "extra_domains": [],
     "smart_profiles": {
@@ -387,6 +387,37 @@ async def unique_config_path(base: str | None, fallback: str) -> str:
 
 def proto_slug(proto: str) -> str:
     return proto.replace('shadowsocks-tls', 'ss').replace('trojan-', 'tr-').replace('vless-', 'vl-').replace('xhttp-', 'xh-').replace('-up', '').replace('-one', '1')
+
+
+def normalize_login_path(value: str | None) -> str:
+    """Slug for custom login URL: /{slug}/login. Empty = default /login."""
+    if value is None:
+        return ""
+    value = str(value).strip().strip("/")
+    value = re.sub(r"^https?://", "", value, flags=re.I).split("/", 1)[0] if "://" in str(value) else value
+    value = value.strip().strip("/")
+    # only path segment characters
+    value = re.sub(r"[^A-Za-z0-9._-]", "", value)[:64]
+    # reserve system paths
+    reserved = {
+        "api", "login", "dashboard", "health", "stats", "sub", "sub-all", "sub-group",
+        "p", "ws", "proxy", "cf-sub", "domain-sub", "xhttp-siz10", "trojan-ws", "ss",
+        "docs", "redoc", "openapi.json", "test-ws",
+    }
+    if not value or value.lower() in reserved or len(value) < 4:
+        return ""
+    return value
+
+
+def get_login_path() -> str:
+    panel = SETTINGS.get("panel") or {}
+    return normalize_login_path(panel.get("login_path") or "")
+
+
+def get_login_url() -> str:
+    slug = get_login_path()
+    return f"/{slug}/login" if slug else "/login"
+
 
 def get_host() -> str:
     raw = str((SETTINGS.get("panel") or {}).get("domain") or "").strip()
@@ -1672,7 +1703,7 @@ async def public_sub_data(uuid_key: str, request: Request):
 # ══════════════════════════════════════════════════════════════════════════════
 @app.get("/api/settings")
 async def api_settings(_=Depends(require_auth)):
-    return {"settings": SETTINGS, "host": get_host(), "default_host": os.environ.get("RAILWAY_PUBLIC_DOMAIN", CONFIG["host"])}
+    return {"settings": SETTINGS, "host": get_host(), "default_host": os.environ.get("RAILWAY_PUBLIC_DOMAIN", CONFIG["host"]), "login_url": get_login_url(), "login_path": get_login_path()}
 
 @app.patch("/api/settings")
 async def api_update_settings(request: Request, _=Depends(require_auth)):
@@ -1680,11 +1711,20 @@ async def api_update_settings(request: Request, _=Depends(require_auth)):
     for section in ("theme", "security", "cleanup", "panel"):
         if section in body and isinstance(body[section], dict):
             SETTINGS.setdefault(section, {}).update(body[section])
-            if section == "panel" and "domain" in body["panel"]:
-                SETTINGS["panel"]["domain"] = _norm_domain(str(body["panel"].get("domain") or ""))
+            if section == "panel":
+                if "domain" in body["panel"]:
+                    SETTINGS["panel"]["domain"] = _norm_domain(str(body["panel"].get("domain") or ""))
+                if "login_path" in body["panel"]:
+                    SETTINGS["panel"]["login_path"] = normalize_login_path(str(body["panel"].get("login_path") or ""))
     await save_state()
     log_activity("system", "تنظیمات پیشرفته ذخیره شد", "ok")
-    return {"ok": True, "settings": SETTINGS, "host": get_host()}
+    return {
+        "ok": True,
+        "settings": SETTINGS,
+        "host": get_host(),
+        "login_url": get_login_url(),
+        "login_path": get_login_path(),
+    }
 
 @app.get("/api/customers")
 async def api_customers(_=Depends(require_auth)):
@@ -1887,22 +1927,50 @@ async def api_support_messages(_=Depends(require_auth)):
 async def api_support_send(request: Request, _=Depends(require_auth)):
     raise HTTPException(status_code=404, detail="این بخش در نسخه مستقل OXNET حذف شده است")
 
+
+def _not_found_html() -> HTMLResponse:
+    html = (
+        "<!DOCTYPE html><html lang='fa' dir='rtl'><head><meta charset='UTF-8'><title>404</title>"
+        "<style>body{font-family:system-ui,sans-serif;background:#F8FAFC;color:#0F172A;"
+        "display:flex;min-height:100vh;align-items:center;justify-content:center;margin:0}"
+        ".b{text-align:center}.c{font-size:56px;font-weight:700;color:#94A3B8}"
+        "p{color:#64748B;margin-top:8px}</style></head><body><div class='b'><div class='c'>404</div>"
+        "<p>صفحه پیدا نشد</p></div></body></html>"
+    )
+    return HTMLResponse(content=html, status_code=404)
+
+
 @app.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request):
+    if get_login_path():
+        return _not_found_html()
     if await is_valid_session(request.cookies.get(SESSION_COOKIE)):
-        return RedirectResponse(url="/dashboard")
+        return RedirectResponse("/dashboard", status_code=302)
     return HTMLResponse(content=render_html(LOGIN_HTML))
+
+
+@app.get("/{login_slug}/login", response_class=HTMLResponse)
+async def custom_login_page(login_slug: str, request: Request):
+    expected = get_login_path()
+    if not expected or normalize_login_path(login_slug) != expected:
+        return _not_found_html()
+    if await is_valid_session(request.cookies.get(SESSION_COOKIE)):
+        return RedirectResponse("/dashboard", status_code=302)
+    return HTMLResponse(content=render_html(LOGIN_HTML))
+
 
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request):
     if not await is_valid_session(request.cookies.get(SESSION_COOKIE)):
-        return RedirectResponse(url="/login")
+        return RedirectResponse(get_login_url(), status_code=302)
     await ensure_default_link()
     return HTMLResponse(content=render_html(DASHBOARD_HTML))
+
 
 @app.get("/test-ws", response_class=HTMLResponse)
 async def test_ws_redirect():
     return HTMLResponse(content="<script>location.href='/dashboard'</script>")
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=CONFIG["port"], log_level="info", workers=1)
