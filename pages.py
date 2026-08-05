@@ -1042,22 +1042,27 @@ a{color:inherit;text-decoration:none}
 .cm-dd.open .cm-dd-panel{grid-template-rows:1fr}
 .cm-dd-panel-inner{overflow:hidden}
 .cm-dd-list{border-top:1px solid var(--card-b);padding:6px}
-.cm-opt{display:flex;align-items:flex-start;gap:12px;padding:14px;border-radius:14px;cursor:pointer;transition:background 200ms ease,border-color 200ms ease,transform 200ms ease,box-shadow 200ms ease;margin-bottom:12px;border:1px solid var(--card-b);background:var(--card)}
-.cm-opt:hover{border-color:var(--card-bh);transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,23,42,.05)}
-.cm-opt.sel{background:#EFF6FF;border-color:#2563EB;box-shadow:none}
-[data-theme="dark"] .cm-opt.sel{background:rgba(37,99,235,.12);border-color:#3B82F6}
-.cm-opt-radio{width:18px;height:18px;border-radius:50%;border:2px solid #CBD5E1;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:border-color 200ms ease;margin-top:2px;background:transparent}
+.cm-opt{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:14px;cursor:pointer;transition:background 200ms ease,border-color 200ms ease,transform 200ms ease,box-shadow 200ms ease;margin-bottom:12px;border:1px solid #DBEAFE;background:#EFF6FF}
+.cm-opt:hover{border-color:#93C5FD;transform:translateY(-2px);box-shadow:0 8px 20px rgba(37,99,235,.08)}
+.cm-opt.sel{background:#DBEAFE;border-color:#2563EB;box-shadow:0 0 0 1px #2563EB}
+[data-theme="dark"] .cm-opt{background:rgba(248,250,252,.06);border-color:rgba(248,250,252,.12)}
+[data-theme="dark"] .cm-opt:hover{background:rgba(248,250,252,.09);border-color:rgba(248,250,252,.18);box-shadow:0 8px 20px rgba(0,0,0,.2)}
+[data-theme="dark"] .cm-opt.sel{background:rgba(248,250,252,.12);border-color:#93C5FD;box-shadow:0 0 0 1px rgba(147,197,253,.35)}
+.cm-opt-radio{width:18px;height:18px;border-radius:50%;border:2px solid #93C5FD;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:border-color 200ms ease;margin-top:2px;background:transparent}
 .cm-opt.sel .cm-opt-radio{border-color:#2563EB}
+[data-theme="dark"] .cm-opt-radio{border-color:rgba(248,250,252,.35)}
+[data-theme="dark"] .cm-opt.sel .cm-opt-radio{border-color:#93C5FD}
 .cm-opt-radio::after{content:'';width:8px;height:8px;border-radius:50%;background:#2563EB;transform:scale(0);transition:transform 200ms ease}
 .cm-opt.sel .cm-opt-radio::after{transform:scale(1)}
-.cm-opt-icon{display:none}
+[data-theme="dark"] .cm-opt-radio::after{background:#93C5FD}
+.cm-opt-icon{display:none !important}
 .cm-opt-text{flex:1;min-width:0}
 .cm-opt-title{font-size:15px;font-weight:600;color:var(--t1);letter-spacing:-.01em}
 .cm-opt-desc{font-size:11.5px;color:var(--t2);margin-top:4px;line-height:1.7;font-weight:400}
-.cm-opt-tag{font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:999px;background:#F1F5F9;color:#475569;flex-shrink:0}
-[data-theme="dark"] .cm-opt-tag{background:#1E293B;color:#CBD5E1}
-.cm-opt-tag.rec,.cm-opt.sel .cm-opt-tag{background:#DBEAFE;color:#1D4ED8}
-[data-theme="dark"] .cm-opt-tag.rec,[data-theme="dark"] .cm-opt.sel .cm-opt-tag{background:rgba(37,99,235,.18);color:#93C5FD}
+.cm-opt-tag{font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:999px;background:rgba(37,99,235,.1);color:#1D4ED8;flex-shrink:0}
+[data-theme="dark"] .cm-opt-tag{background:rgba(248,250,252,.1);color:#E2E8F0}
+.cm-opt-tag.rec,.cm-opt.sel .cm-opt-tag{background:#2563EB;color:#fff}
+[data-theme="dark"] .cm-opt-tag.rec,[data-theme="dark"] .cm-opt.sel .cm-opt-tag{background:#93C5FD;color:#0F172A}
 
 .cm-pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
 .cm-pill{padding:6px 13px;border-radius:20px;font-size:10.5px;font-weight:700;color:var(--t2);
@@ -1541,14 +1546,19 @@ body{
 .cm-opt.active,
 .cm-opt[aria-selected="true"]{
   border-color:#2563EB !important;
-  background:#EFF6FF !important;
-  box-shadow:none !important;
+  background:#DBEAFE !important;
+  box-shadow:0 0 0 1px #2563EB !important;
 }
 [data-theme="dark"] .cm-opt.on,
 [data-theme="dark"] .cm-opt.selected,
 [data-theme="dark"] .cm-opt.active{
-  border-color:#3B82F6 !important;
-  background:rgba(37,99,235,.12) !important;
+  border-color:#93C5FD !important;
+  background:rgba(248,250,252,.12) !important;
+  box-shadow:0 0 0 1px rgba(147,197,253,.35) !important;
+}
+[data-theme="dark"] .cm-opt{
+  background:rgba(248,250,252,.06) !important;
+  border-color:rgba(248,250,252,.12) !important;
 }
 .cm-opt-icon,
 .cm-opt .ico,
@@ -1616,6 +1626,17 @@ body{
   font-size:11px;color:var(--t3);padding:8px 12px 4px;text-align:center;font-weight:500;
 }
 
+
+.stat-v2-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px}
+.stat-v2-foot .spark{width:120px;height:28px;flex-shrink:0;opacity:.9}
+.dash-chart-card .ch{height:280px !important}
+.dash-chart-card .ch-sm{height:240px !important;position:relative}
+.donut-center{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  pointer-events:none;text-align:center;padding-bottom:28px;
+}
+.donut-center .dc-num{font-size:22px;font-weight:700;color:var(--t1);letter-spacing:-.03em;line-height:1.1}
+.donut-center .dc-sub{font-size:11px;color:var(--t3);font-weight:500;margin-top:4px}
 /* ===== OXNET Modern Enterprise SaaS system ===== */
 html{font-size:15px}
 body{
@@ -2065,22 +2086,22 @@ body{
     <div class="stat-card-v2">
       <div class="stat-v2-top"><span class="stat-v2-label">اتصالات زنده</span><i class="ti ti-plug-connected stat-v2-ic"></i></div>
       <div class="stat-v2-num" id="m-conns">—</div>
-      <div class="stat-v2-foot"><span class="stat-v2-hint">نشست‌های فعال</span></div>
+      <div class="stat-v2-foot"><span class="stat-v2-hint">نشست‌های فعال</span><canvas class="spark" id="spark-conns" width="120" height="28"></canvas></div>
     </div>
     <div class="stat-card-v2">
       <div class="stat-v2-top"><span class="stat-v2-label">ترافیک کل</span><i class="ti ti-transfer stat-v2-ic"></i></div>
       <div class="stat-v2-num" id="m-traffic">—</div>
-      <div class="stat-v2-foot"><span class="stat-v2-hint">از شروع سرویس</span></div>
+      <div class="stat-v2-foot"><span class="stat-v2-hint">از شروع سرویس</span><canvas class="spark" id="spark-traffic" width="120" height="28"></canvas></div>
     </div>
     <div class="stat-card-v2">
       <div class="stat-v2-top"><span class="stat-v2-label">کانفیگ فعال</span><i class="ti ti-link stat-v2-ic"></i></div>
       <div class="stat-v2-num" id="m-alinks">—</div>
-      <div class="stat-v2-foot"><span class="stat-v2-hint" id="m-lsub">کل لینک‌ها</span></div>
+      <div class="stat-v2-foot"><span class="stat-v2-hint" id="m-lsub">کل لینک‌ها</span><canvas class="spark" id="spark-links" width="120" height="28"></canvas></div>
     </div>
     <div class="stat-card-v2">
       <div class="stat-v2-top"><span class="stat-v2-label">گروه ساب</span><i class="ti ti-folders stat-v2-ic"></i></div>
       <div class="stat-v2-num" id="m-subs">—</div>
-      <div class="stat-v2-foot"><span class="stat-v2-hint">صفحات عمومی</span></div>
+      <div class="stat-v2-foot"><span class="stat-v2-hint">صفحات عمومی</span><canvas class="spark" id="spark-subs" width="120" height="28"></canvas></div>
     </div>
   </div>
 
@@ -2108,8 +2129,8 @@ body{
     <div class="dash-chart-card">
       <div class="dash-card-head">
         <div>
-          <div class="dash-card-title"><i class="ti ti-chart-area"></i> روند ترافیک ساعتی</div>
-          <div class="dash-card-sub">مصرف بر اساس مگابایت در هر ساعت</div>
+          <div class="dash-card-title"><i class="ti ti-chart-area"></i> ترافیک (ساعتی)</div>
+          <div class="dash-card-sub">Upload / مصرف — ۳۰ بازه اخیر</div>
         </div>
         <span class="badge bg-blue" id="uptime-badge">—</span>
       </div>
@@ -2118,11 +2139,11 @@ body{
     <div class="dash-chart-card">
       <div class="dash-card-head">
         <div>
-          <div class="dash-card-title"><i class="ti ti-chart-donut"></i> ترکیب پروتکل‌ها</div>
-          <div class="dash-card-sub">سهم تقریبی کانفیگ‌های فعال</div>
+          <div class="dash-card-title"><i class="ti ti-chart-donut"></i> کاربران بر اساس پروتکل</div>
+          <div class="dash-card-sub">سهم پروتکل‌های فعال</div>
         </div>
       </div>
-      <div class="ch-sm"><canvas id="ch2"></canvas></div>
+      <div class="ch-sm"><canvas id="ch2"></canvas><div class="donut-center"><div class="dc-num" id="donut-total">—</div><div class="dc-sub">کل کانفیگ</div></div></div>
     </div>
   </div>
 
@@ -2677,9 +2698,10 @@ async function fetchStats(){
     prevTraf=d.total_traffic_mb;
     if(d.hourly){
       const labels=Object.keys(d.hourly).sort(),vals=labels.map(k=>+(d.hourly[k]/1024**2).toFixed(2));
-      [ch1,ch3].forEach(c=>{if(!c)return;c.data.labels=labels;c.data.datasets[0].data=vals;c.update()});
+      [ch1,ch3].forEach(c=>{if(!c)return;c.data.labels=labels;c.data.datasets[0].data=vals;c.update()}); try{seedSparks(d.hourly);}catch(e){}
       const pc=d.protocol_counts||{};
-      if(ch2){ch2.data.labels=['VLESS WS','Trojan WS','XHTTP','Shadowsocks TLS','MTProto'];ch2.data.datasets[0].data=[pc.vless_ws||0,pc.trojan_ws||0,pc.xhttp||0,pc.shadowsocks_tls||0,pc.mtproto||0];ch2.update();}
+      if(ch2){ch2.data.labels=['VLESS WS','Trojan WS','XHTTP','Shadowsocks TLS','MTProto'];ch2.data.datasets[0].data=[pc.vless_ws||0,pc.trojan_ws||0,pc.xhttp||0,pc.shadowsocks_tls||0,pc.mtproto||0];
+    try{const s=(ch2.data.datasets[0].data||[]).reduce((a,b)=>a+Number(b||0),0);const el=document.getElementById("donut-total");if(el)el.textContent=toFa?toFa(s):s;}catch(e){}ch2.update();}
       renderFallbackCharts(labels, vals, pc);
       if(vals.length){const avg=vals.reduce((a,b)=>a+b,0)/vals.length,peak=Math.max(...vals);const tAvg=document.getElementById('t-avg'),tPeak=document.getElementById('t-peak');if(tAvg)tAvg.innerHTML=avg.toFixed(2)+'<span class="m-unit">MB</span>';if(tPeak)tPeak.innerHTML=peak.toFixed(2)+'<span class="m-unit">MB</span>';}
     }
@@ -3529,6 +3551,46 @@ function makeGradient(ctx,color1,color2){
   g.addColorStop(0,color1);g.addColorStop(1,color2);
   return g;
 }
+
+function drawSpark(id, values, color){
+  const c=document.getElementById(id); if(!c) return;
+  const ctx=c.getContext('2d');
+  const w=c.width, h=c.height;
+  ctx.clearRect(0,0,w,h);
+  const data=(values&&values.length)?values:[2,3,2,4,3,5,4,6,5,7,6,8];
+  const max=Math.max(...data,1), min=Math.min(...data,0);
+  const range=Math.max(max-min, 0.1);
+  ctx.beginPath();
+  data.forEach((v,i)=>{
+    const x=(i/(data.length-1))*w;
+    const y=h-4-((v-min)/range)*(h-8);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle=color||'#2563EB';
+  ctx.lineWidth=2;
+  ctx.lineJoin='round';
+  ctx.lineCap='round';
+  ctx.stroke();
+  // soft fill
+  const lastX=w, lastY=h-4-((data[data.length-1]-min)/range)*(h-8);
+  ctx.lineTo(lastX,h); ctx.lineTo(0,h); ctx.closePath();
+  ctx.fillStyle=(color||'#2563EB').replace(')', ',0.12)').replace('rgb', 'rgba').replace('#2563EB','rgba(37,99,235,0.12)').replace('#16A34A','rgba(22,163,74,0.12)');
+  if((color||'').startsWith('#')){
+    const hex=color||'#2563EB';
+    const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+    ctx.fillStyle=`rgba(${r},${g},${b},0.12)`;
+  }
+  ctx.fill();
+}
+function seedSparks(hourly){
+  const vals=Object.values(hourly||{}).map(Number);
+  const series=vals.length?vals.slice(-12):null;
+  drawSpark('spark-conns', series, '#2563EB');
+  drawSpark('spark-traffic', series, '#16A34A');
+  drawSpark('spark-links', series, '#0EA5E9');
+  drawSpark('spark-subs', series, '#D97706');
+}
+
 function initCharts(){
   if(typeof Chart==='undefined'){setupFallbackCharts();return;}
   try{
