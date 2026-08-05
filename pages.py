@@ -92,6 +92,10 @@ input::placeholder{color:var(--muted);opacity:.7}
 }
 .err.show{display:flex}
 .footer{margin-top:24px;text-align:center;font-size:12px;color:var(--muted);font-weight:500}
+
+.brand-features{list-style:none;margin-top:28px;display:flex;flex-direction:column;gap:12px;position:relative;z-index:1}
+.brand-features li{display:flex;align-items:center;gap:10px;font-size:13.5px;color:#CBD5E1;font-weight:500}
+.brand-features i{color:#60A5FA;font-size:16px}
 @keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
@@ -108,6 +112,11 @@ input::placeholder{color:var(--muted);opacity:.7}
       </div>
       <div class="brand-title">مدیریت سریع، تمیز و چندپروتکل</div>
       <p class="brand-desc">پنل کنترل برای کانفیگ‌ها، سابسکریپشن‌ها و مانیتورینگ ترافیک — با طراحی ساده و حرفه‌ای.</p>
+      <ul class="brand-features">
+        <li><i class="ti ti-check"></i> VLESS · Trojan · XHTTP · Shadowsocks</li>
+        <li><i class="ti ti-check"></i> سابسکریپشن و دامنه کلادفلیر</li>
+        <li><i class="ti ti-check"></i> مانیتورینگ ترافیک و اتصالات</li>
+      </ul>
     </div>
     <div class="brand-foot">OXNET Control Panel</div>
   </div>
@@ -165,33 +174,40 @@ DASHBOARD_HTML = r"""<!DOCTYPE html>
   --font:"Vazirmatn", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
   --bg:#F8FAFC;
   --bg2:#FFFFFF;
-  --bg3:#E5E7EB;
+  --bg3:#E2E8F0;
   --card:#FFFFFF;
-  --card-b:#E5E7EB;
-  --card-bh:#D1D5DB;
+  --card-b:#E2E8F0;
+  --card-bh:#CBD5E1;
   --accent:#2563EB;
   --accent2:#1D4ED8;
-  --accent-d:rgba(37,99,235,0.10);
+  --accent-d:rgba(37,99,235,0.08);
   --green:#16A34A;
-  --green-bg:rgba(22,163,74,0.12);
+  --green-bg:#DCFCE7;
   --green-t:#15803D;
   --red:#DC2626;
-  --red-bg:rgba(220,38,38,0.12);
+  --red-bg:#FEE2E2;
   --red-t:#B91C1C;
-  --amber:#F59E0B;
-  --amber-bg:rgba(245,158,11,0.12);
-  --amber-t:#D97706;
+  --amber:#D97706;
+  --amber-bg:#FEF3C7;
+  --amber-t:#B45309;
   --purple:#7C3AED;
-  --purple-bg:rgba(124,58,237,0.12);
+  --purple-bg:rgba(124,58,237,0.10);
   --purple-t:#6D28D9;
-  --info:#06B6D4;
-  --info-bg:rgba(6,182,212,0.12);
-  --t1:#111827;
-  --t2:#6B7280;
-  --t3:#9CA3AF;
-  --sidebar-w:260px;
-  --radius:16px;
-  --shadow:0 10px 28px rgba(15,23,42,0.06), 0 2px 6px rgba(15,23,42,0.03);
+  --info:#0891B2;
+  --info-bg:rgba(8,145,178,0.10);
+  --t1:#0F172A;
+  --t2:#64748B;
+  --t3:#94A3B8;
+  --sidebar-w:264px;
+  --radius:14px;
+  --r-sm:10px;
+  --r-md:14px;
+  --r-lg:18px;
+  --shadow:0 1px 2px rgba(15,23,42,0.04);
+  --shadow-md:0 8px 20px rgba(15,23,42,0.05);
+  --shadow-lg:0 16px 40px rgba(15,23,42,0.06);
+  --t:200ms ease;
+  --space:8px;
 }
 [data-theme="dark"]{
   --bg:#0F172A;
@@ -202,7 +218,7 @@ DASHBOARD_HTML = r"""<!DOCTYPE html>
   --card-bh:#475569;
   --accent:#3B82F6;
   --accent2:#60A5FA;
-  --accent-d:rgba(59,130,246,0.15);
+  --accent-d:rgba(59,130,246,0.14);
   --green:#22C55E;
   --green-bg:rgba(34,197,94,0.14);
   --green-t:#4ADE80;
@@ -215,12 +231,14 @@ DASHBOARD_HTML = r"""<!DOCTYPE html>
   --purple:#A78BFA;
   --purple-bg:rgba(167,139,250,0.14);
   --purple-t:#C4B5FD;
-  --info:#38BDF8;
-  --info-bg:rgba(56,189,248,0.14);
+  --info:#22D3EE;
+  --info-bg:rgba(34,211,238,0.12);
   --t1:#F8FAFC;
   --t2:#CBD5E1;
   --t3:#64748B;
-  --shadow:0 16px 40px rgba(0,0,0,0.45);
+  --shadow:0 1px 2px rgba(0,0,0,0.2);
+  --shadow-md:0 8px 20px rgba(0,0,0,0.28);
+  --shadow-lg:0 16px 40px rgba(0,0,0,0.35);
 }
 html,body{height:100%}
 body{font-family:var(--font,"Vazirmatn",system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif);background:var(--bg);color:var(--t1);min-height:100vh;display:flex;font-size:14.5px;line-height:1.65;font-weight:400;letter-spacing:-.01em;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;transition:background .3s,color .3s}
@@ -1453,6 +1471,134 @@ body{
 }
 .sub-card-url-text{color:var(--t2) !important}
 .dash-main-card::before{background:var(--accent) !important}
+
+/* ===== OXNET Modern Enterprise SaaS system ===== */
+html{font-size:15px}
+body{
+  background:var(--bg) !important;
+  color:var(--t1);
+  font-weight:400;
+  line-height:1.7;
+  letter-spacing:-.011em;
+}
+.main{
+  padding:24px 28px 48px !important;
+  max-width:1280px;
+}
+@media(max-width:900px){.main{padding:16px 14px 40px !important}}
+.sidebar{
+  background:var(--bg2) !important;
+  border-left:1px solid var(--card-b) !important;
+  box-shadow:none !important;
+}
+.logo{padding:20px 16px !important;border-bottom:1px solid var(--card-b)}
+.logo-text,.brand-name{font-weight:700 !important;font-size:17px !important;letter-spacing:-.02em}
+.nav-sec{
+  font-size:11px !important;font-weight:600 !important;letter-spacing:.06em !important;
+  text-transform:uppercase;color:var(--t3) !important;margin:16px 14px 6px !important;
+}
+.nav-it{
+  margin:2px 10px !important;border-radius:var(--r-sm) !important;
+  padding:10px 12px !important;color:var(--t2) !important;font-weight:500 !important;
+  border-right:3px solid transparent !important;transition:background var(--t),color var(--t),border-color var(--t) !important;
+}
+.nav-it:hover{background:#F3F4F6 !important;color:var(--t1) !important}
+[data-theme="dark"] .nav-it:hover{background:#1E293B !important}
+.nav-it.on{
+  background:#EFF6FF !important;color:var(--accent) !important;
+  border-right:3px solid var(--accent) !important;box-shadow:none !important;font-weight:600 !important;
+}
+.nav-it.on i{color:var(--accent) !important}
+[data-theme="dark"] .nav-it.on{background:#1E3A8A33 !important;color:#93C5FD !important;border-right-color:#3B82F6 !important}
+[data-theme="dark"] .nav-it.on i{color:#93C5FD !important}
+.nav-it.on .nav-badge{background:rgba(37,99,235,.12) !important;color:var(--accent) !important}
+
+.btn,.btn-p,.btn-g,.btn-o,.btn-d,.btn-sm,.btn-pur,.btn-amber{
+  border-radius:12px !important;font-weight:600 !important;font-size:14px !important;
+  transition:background var(--t),color var(--t),border-color var(--t),transform var(--t),box-shadow var(--t),opacity var(--t) !important;
+}
+.btn-p{background:var(--accent) !important;color:#fff !important;box-shadow:0 1px 2px rgba(37,99,235,.2) !important}
+.btn-p:hover{background:var(--accent2) !important}
+.btn-g,.btn-o{background:transparent !important;border:1px solid var(--card-b) !important;color:var(--t2) !important;box-shadow:none !important}
+.btn-g:hover,.btn-o:hover{background:var(--accent-d) !important;color:var(--accent) !important;border-color:transparent !important}
+.btn-d{background:var(--red-bg) !important;color:var(--red-t) !important;border:none !important}
+.btn-sm{padding:7px 12px !important;font-size:13px !important;border-radius:10px !important}
+
+.card,.cfg-card,.sub-card,.dash-chart-card,.vless-box,.stat-card-v2,.multi-group-card{
+  background:var(--card) !important;
+  border:1px solid var(--card-b) !important;
+  border-radius:var(--r-md) !important;
+  box-shadow:var(--shadow-md) !important;
+}
+.badge{border-radius:999px !important;font-weight:600 !important;font-size:11px !important;padding:3px 10px !important}
+.badge.bg-blue{background:var(--accent-d) !important;color:var(--accent) !important}
+.badge.bg-green{background:var(--green-bg) !important;color:var(--green-t) !important}
+.badge.bg-red{background:var(--red-bg) !important;color:var(--red-t) !important}
+.badge.bg-amber{background:var(--amber-bg) !important;color:var(--amber-t) !important}
+
+.fi,.pw-input,.cm-input,.modal-v2-input,input[type="text"],input[type="password"],select,textarea{
+  height:46px;border-radius:12px !important;border:1px solid var(--card-b) !important;
+  background:var(--card) !important;color:var(--t1) !important;transition:border-color var(--t),box-shadow var(--t) !important;
+}
+.fi:focus,.pw-input:focus,.cm-input:focus,.modal-v2-input:focus,input:focus,select:focus,textarea:focus{
+  border-color:var(--accent) !important;box-shadow:0 0 0 3px var(--accent-d) !important;outline:none;
+}
+::placeholder{color:#94A3B8 !important}
+
+/* Overview layout */
+.ov-topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.ov-greeting{font-size:24px;font-weight:700;color:var(--t1);letter-spacing:-.03em;line-height:1.3}
+.ov-sub{font-size:14px;color:var(--t2);margin-top:4px;font-weight:400}
+.ov-top-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+.qa-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:20px}
+@media(max-width:1000px){.qa-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.qa-grid{grid-template-columns:repeat(2,1fr)}}
+.qa-item{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  padding:16px 10px;background:var(--card);border:1px solid var(--card-b);border-radius:var(--r-md);
+  box-shadow:var(--shadow);cursor:pointer;font-family:inherit;color:var(--t1);
+  transition:background var(--t),border-color var(--t),transform var(--t),box-shadow var(--t);
+}
+.qa-item i{font-size:20px;color:var(--accent)}
+.qa-item span{font-size:12.5px;font-weight:600;color:var(--t2)}
+.qa-item:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:var(--shadow-md)}
+.qa-item:hover span{color:var(--t1)}
+
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+@media(max-width:900px){.stat-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.stat-grid{grid-template-columns:1fr}}
+.stat-card-v2{padding:16px 18px;transition:border-color var(--t),box-shadow var(--t)}
+.stat-card-v2:hover{border-color:var(--card-bh);box-shadow:var(--shadow-md)}
+.stat-v2-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.stat-v2-label{font-size:12.5px;font-weight:500;color:var(--t2)}
+.stat-v2-ic{font-size:18px;color:var(--t3);opacity:.7}
+.stat-v2-num{font-size:28px;font-weight:700;color:var(--t1);letter-spacing:-.03em;line-height:1.15}
+.stat-v2-foot{margin-top:8px}
+.stat-v2-hint{font-size:12px;color:var(--t3);font-weight:400}
+
+.proto-strip{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.proto-chip-v2{
+  display:inline-flex;align-items:center;gap:6px;padding:7px 12px;
+  background:var(--card);border:1px solid var(--card-b);border-radius:999px;
+  font-size:12.5px;font-weight:600;color:var(--t2);
+}
+.proto-chip-v2 i{color:var(--accent);font-size:14px}
+
+.ov-bottom{margin-top:4px;margin-bottom:8px}
+.empty{text-align:center;padding:32px 16px;color:var(--t3)}
+.empty i{font-size:32px;display:block;margin-bottom:10px;opacity:.5}
+.empty p{font-size:14px;font-weight:500;color:var(--t2)}
+
+/* modal backdrop */
+.modal-bg,.modal-overlay,.lmodal-bg{backdrop-filter:blur(8px);background:rgba(15,23,42,.4) !important}
+
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:999px}
+::-webkit-scrollbar-track{background:transparent}
+
+.tb-title{font-size:20px !important;font-weight:700 !important;letter-spacing:-.02em}
+.tb-sub{font-size:13px !important;color:var(--t2) !important}
 </style>
 </head>
 <body>
@@ -1751,30 +1897,54 @@ body{
 <main class="main">
 <div class="ann-banner-wrap" id="ann-banner-wrap"></div>
 <section class="pg on" id="pg-overview">
-  <div class="dash-hero">
-    <div class="dash-main-card">
-      <div class="dash-eyebrow">OXNET Control Panel</div>
-      <div class="dash-title">مدیریت سریع، تمیز و <span>چند پروتکل</span></div>
-      <div class="dash-desc">نمای زنده از مصرف، اتصالات، کانفیگ‌ها و سلامت سرویس. از همین صفحه می‌تونی لینک پیش‌فرض رو برداری یا وارد ساخت کانفیگ جدید بشی.</div>
-      <div class="dash-actions">
-        <button class="btn btn-p" onclick="dashCreateConfig()"><i class="ti ti-plus"></i> ساخت کانفیگ</button>
-        <button class="btn btn-g" onclick="dashGoTraffic()"><i class="ti ti-chart-area"></i> مشاهده ترافیک</button>
-        <button class="btn btn-o" onclick="dashRefresh()"><i class="ti ti-refresh"></i> رفرش</button>
-      </div>
+  <div class="ov-topbar">
+    <div>
+      <div class="ov-greeting" id="ov-greeting">سلام، خوش آمدید</div>
+      <div class="ov-sub">نمای کلی سرویس، ترافیک و کانفیگ‌های فعال</div>
     </div>
-    <div class="dash-side">
-      <div class="dash-kpi"><div class="dash-kpi-icon"><i class="ti ti-plug-connected"></i></div><div class="dash-kpi-label">اتصالات</div><div class="dash-kpi-val" id="m-conns">—</div><div class="dash-kpi-sub">زنده</div></div>
-      <div class="dash-kpi"><div class="dash-kpi-icon"><i class="ti ti-transfer"></i></div><div class="dash-kpi-label">ترافیک</div><div class="dash-kpi-val" id="m-traffic">—</div><div class="dash-kpi-sub">از شروع</div></div>
-      <div class="dash-kpi"><div class="dash-kpi-icon"><i class="ti ti-link"></i></div><div class="dash-kpi-label">فعال</div><div class="dash-kpi-val" id="m-alinks">—</div><div class="dash-kpi-sub" id="m-lsub">کانفیگ</div></div>
-      <div class="dash-kpi"><div class="dash-kpi-icon"><i class="ti ti-folders"></i></div><div class="dash-kpi-label">ساب‌ها</div><div class="dash-kpi-val" id="m-subs">—</div><div class="dash-kpi-sub">گروه</div></div>
+    <div class="ov-top-actions">
+      <button class="btn btn-o btn-sm" onclick="dashRefresh()"><i class="ti ti-refresh"></i> بروزرسانی</button>
+      <button class="btn btn-p btn-sm" onclick="dashCreateConfig()"><i class="ti ti-plus"></i> کانفیگ جدید</button>
     </div>
   </div>
 
-  <div class="dash-protocols">
-    <div class="dash-protocol"><i class="ti ti-bolt"></i><div><b>VLESS WS</b><span>پایدار و سریع</span></div></div>
-    <div class="dash-protocol"><i class="ti ti-shield-lock"></i><div><b>Trojan WS</b><span>TLS-ready</span></div></div>
-    <div class="dash-protocol"><i class="ti ti-lock-bolt"></i><div><b>Shadowsocks TLS</b><span>مسیر اختصاصی</span></div></div>
-    <div class="dash-protocol"><i class="ti ti-package"></i><div><b>XHTTP Fixed</b><span>packet / stream</span></div></div>
+  <div class="qa-grid">
+    <button type="button" class="qa-item" onclick="dashCreateConfig()"><i class="ti ti-plus"></i><span>ساخت کانفیگ</span></button>
+    <button type="button" class="qa-item" onclick="navTo('subs')"><i class="ti ti-folders"></i><span>گروه ساب</span></button>
+    <button type="button" class="qa-item" onclick="navTo('traffic')"><i class="ti ti-chart-area"></i><span>ترافیک</span></button>
+    <button type="button" class="qa-item" onclick="navTo('connections')"><i class="ti ti-plug-connected"></i><span>اتصالات</span></button>
+    <button type="button" class="qa-item" onclick="navTo('cloudflare')"><i class="ti ti-cloud"></i><span>کلادفلیر</span></button>
+    <button type="button" class="qa-item" onclick="navTo('settings')"><i class="ti ti-settings"></i><span>تنظیمات</span></button>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card-v2">
+      <div class="stat-v2-top"><span class="stat-v2-label">اتصالات زنده</span><i class="ti ti-plug-connected stat-v2-ic"></i></div>
+      <div class="stat-v2-num" id="m-conns">—</div>
+      <div class="stat-v2-foot"><span class="stat-v2-hint">نشست‌های فعال</span></div>
+    </div>
+    <div class="stat-card-v2">
+      <div class="stat-v2-top"><span class="stat-v2-label">ترافیک کل</span><i class="ti ti-transfer stat-v2-ic"></i></div>
+      <div class="stat-v2-num" id="m-traffic">—</div>
+      <div class="stat-v2-foot"><span class="stat-v2-hint">از شروع سرویس</span></div>
+    </div>
+    <div class="stat-card-v2">
+      <div class="stat-v2-top"><span class="stat-v2-label">کانفیگ فعال</span><i class="ti ti-link stat-v2-ic"></i></div>
+      <div class="stat-v2-num" id="m-alinks">—</div>
+      <div class="stat-v2-foot"><span class="stat-v2-hint" id="m-lsub">کل لینک‌ها</span></div>
+    </div>
+    <div class="stat-card-v2">
+      <div class="stat-v2-top"><span class="stat-v2-label">گروه ساب</span><i class="ti ti-folders stat-v2-ic"></i></div>
+      <div class="stat-v2-num" id="m-subs">—</div>
+      <div class="stat-v2-foot"><span class="stat-v2-hint">صفحات عمومی</span></div>
+    </div>
+  </div>
+
+  <div class="proto-strip">
+    <div class="proto-chip-v2"><i class="ti ti-bolt"></i> VLESS WS</div>
+    <div class="proto-chip-v2"><i class="ti ti-shield-lock"></i> Trojan WS</div>
+    <div class="proto-chip-v2"><i class="ti ti-lock"></i> Shadowsocks TLS</div>
+    <div class="proto-chip-v2"><i class="ti ti-package"></i> XHTTP</div>
   </div>
 
   <div class="vless-box">
@@ -1791,13 +1961,41 @@ body{
   </div>
 
   <div class="dash-chart-grid">
-    <div class="dash-chart-card"><div class="dash-card-head"><div><div class="dash-card-title"><i class="ti ti-chart-area"></i> روند ترافیک ساعتی</div><div class="dash-card-sub">مصرف بر اساس MB در ساعت</div></div><span class="badge bg-blue" id="uptime-badge">—</span></div><div class="ch"><canvas id="ch1"></canvas></div></div>
-    <div class="dash-chart-card"><div class="dash-card-head"><div><div class="dash-card-title"><i class="ti ti-chart-donut"></i> ترکیب پروتکل‌ها</div><div class="dash-card-sub">نمای تقریبی کانفیگ‌های فعال</div></div></div><div class="ch-sm"><canvas id="ch2"></canvas></div></div>
+    <div class="dash-chart-card">
+      <div class="dash-card-head">
+        <div>
+          <div class="dash-card-title"><i class="ti ti-chart-area"></i> روند ترافیک ساعتی</div>
+          <div class="dash-card-sub">مصرف بر اساس مگابایت در هر ساعت</div>
+        </div>
+        <span class="badge bg-blue" id="uptime-badge">—</span>
+      </div>
+      <div class="ch"><canvas id="ch1"></canvas></div>
+    </div>
+    <div class="dash-chart-card">
+      <div class="dash-card-head">
+        <div>
+          <div class="dash-card-title"><i class="ti ti-chart-donut"></i> ترکیب پروتکل‌ها</div>
+          <div class="dash-card-sub">سهم تقریبی کانفیگ‌های فعال</div>
+        </div>
+      </div>
+      <div class="ch-sm"><canvas id="ch2"></canvas></div>
+    </div>
   </div>
 
-  <div class="g2">
-    <div class="card"><div class="card-title"><i class="ti ti-activity"></i> سلامت سرویس</div><div class="sr"><span class="sr-k"><i class="ti ti-shield-check"></i> Path Auth</span><span class="sr-v" style="color:var(--green-t)">فعال</span></div><div class="sr"><span class="sr-k"><i class="ti ti-clock"></i> آپتایم</span><span class="sr-v" id="uptime-inline">—</span></div><div class="sr" style="flex-direction:column;align-items:flex-start;gap:4px"><div style="width:100%;display:flex;justify-content:space-between"><span class="sr-k"><i class="ti ti-gauge"></i> بار نسبی</span><span class="sr-v" id="bw-pct">—%</span></div><div class="spbar" style="width:100%"><div class="spfill" id="bw-bar" style="width:0%"></div></div></div></div>
-    <div class="card"><div class="card-title"><i class="ti ti-list"></i> خلاصه کانفیگ‌ها <span class="ml-auto badge bg-blue" id="lsummary-badge">۰</span></div><div id="lsummary">—</div></div>
+  <div class="g2 ov-bottom">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-activity"></i> سلامت سرویس</div>
+      <div class="sr"><span class="sr-k"><i class="ti ti-shield-check"></i> Path Auth</span><span class="sr-v" style="color:var(--green-t)">فعال</span></div>
+      <div class="sr"><span class="sr-k"><i class="ti ti-clock"></i> آپتایم</span><span class="sr-v" id="uptime-inline">—</span></div>
+      <div class="sr" style="flex-direction:column;align-items:flex-start;gap:6px">
+        <div style="width:100%;display:flex;justify-content:space-between"><span class="sr-k"><i class="ti ti-gauge"></i> بار نسبی</span><span class="sr-v" id="bw-pct">—%</span></div>
+        <div class="spbar" style="width:100%"><div class="spfill" id="bw-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="ti ti-list"></i> خلاصه کانفیگ‌ها <span class="ml-auto badge bg-blue" id="lsummary-badge">۰</span></div>
+      <div id="lsummary">—</div>
+    </div>
   </div>
 </section>
 <section class="pg" id="pg-links">
@@ -2194,6 +2392,18 @@ function startUpdateFromModal() {
   closeModal('modal-update');
   startUpdate(); // تابع موجود
 }
+
+function updateGreeting(){
+  const el=document.getElementById('ov-greeting');
+  if(!el) return;
+  const h=new Date().getHours();
+  let g='سلام';
+  if(h<12) g='صبح بخیر';
+  else if(h<18) g='ظهر بخیر';
+  else g='عصر بخیر';
+  el.textContent=g+'؛ خوش آمدید';
+}
+
 function applyTheme(dark){
   document.documentElement.setAttribute('data-theme',dark?'dark':'light');
   const icon=dark?'ti-sun':'ti-moon',label=dark?'تم روشن':'تم تاریک';
@@ -3354,6 +3564,7 @@ async function sendSupportMsg(){
 document.addEventListener('DOMContentLoaded', async () => {
   await checkAuth();
   initCharts();
+  updateGreeting();
   loadPanelDomain();
   document.getElementById('sub-all-url') && (document.getElementById('sub-all-url').textContent = location.protocol + '//' + location.host + '/sub-all');
   
