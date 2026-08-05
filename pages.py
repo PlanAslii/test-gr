@@ -9,159 +9,125 @@ LOGIN_HTML = r"""<!DOCTYPE html>
 <title>ورود · OXNET</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --font:"Vazirmatn", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
-  --bg:#F1F5F9;
-  --bg-deep:#E2E8F0;
-  --card:#FFFFFF;
-  --ink:#111827;
-  --muted:#6B7280;
-  --line:#E5E7EB;
-  --accent:#2563EB;
-  --accent-hover:#1D4ED8;
-  --accent-soft:rgba(37,99,235,.12);
-  --ok:#16A34A;
-  --err:#DC2626;
-  --err-bg:rgba(220,38,38,.1);
-  --shadow:0 20px 50px rgba(15,23,42,.08), 0 2px 8px rgba(15,23,42,.04);
-  --radius:18px;
+  --font:"Vazirmatn",system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;
+  --bg:#F8FAFC; --bg2:#EEF2F7; --card:#FFFFFF;
+  --ink:#111827; --muted:#6B7280; --line:#E5E7EB;
+  --accent:#2563EB; --accent-hover:#1D4ED8; --accent-soft:rgba(37,99,235,.08);
+  --ok:#16A34A; --err:#DC2626; --err-bg:rgba(220,38,38,.08);
+  --r-sm:10px; --r-md:14px; --r-lg:18px;
+  --shadow:0 8px 20px rgba(15,23,42,.05);
+  --t:200ms ease;
 }
 @media (prefers-color-scheme: dark){
   :root{
-    --bg:#020617;
-    --bg-deep:#0F172A;
-    --card:#111827;
-    --ink:#F8FAFC;
-    --muted:#CBD5E1;
-    --line:#334155;
-    --accent:#3B82F6;
-    --accent-hover:#60A5FA;
-    --accent-soft:rgba(59,130,246,.15);
-    --ok:#22C55E;
-    --err:#EF4444;
-    --err-bg:rgba(239,68,68,.12);
-    --shadow:0 24px 64px rgba(0,0,0,.55);
+    --bg:#0B1220; --bg2:#111827; --card:#111827;
+    --ink:#F8FAFC; --muted:#CBD5E1; --line:#334155;
+    --accent:#3B82F6; --accent-hover:#60A5FA; --accent-soft:rgba(59,130,246,.12);
+    --ok:#22C55E; --err:#EF4444; --err-bg:rgba(239,68,68,.12);
+    --shadow:0 8px 24px rgba(0,0,0,.35);
   }
 }
 html,body{height:100%}
-html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
 body{
-  font-family:var(--font);
-  background:var(--bg);
-  color:var(--ink);
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:24px;
-  position:relative;
-  overflow:hidden;
-  line-height:1.65;
-  font-weight:400;
-  letter-spacing:-.01em;
+  font-family:var(--font);color:var(--ink);background:linear-gradient(180deg,var(--bg),var(--bg2));
+  min-height:100vh;display:flex;-webkit-font-smoothing:antialiased;line-height:1.6;font-weight:400;
 }
-.stage{
-  position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:
-    radial-gradient(900px 500px at 12% 10%, rgba(37,99,235,.08), transparent 60%),
-    radial-gradient(700px 420px at 88% 90%, rgba(6,182,212,.06), transparent 55%),
-    linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
+.shell{display:grid;grid-template-columns:1.05fr .95fr;width:100%;min-height:100vh}
+@media(max-width:860px){.shell{grid-template-columns:1fr}.brand-pane{display:none}}
+.brand-pane{
+  background:linear-gradient(165deg,#0F172A 0%,#1E3A8A 100%);
+  color:#F8FAFC;padding:48px;display:flex;flex-direction:column;justify-content:space-between;
+  position:relative;overflow:hidden;
 }
-.stage::after{
-  content:"";
-  position:absolute;inset:0;
-  background-image:radial-gradient(rgba(28,25,23,.035) 1px, transparent 1px);
-  background-size:22px 22px;
-  opacity:.55;
+.brand-pane::after{
+  content:"";position:absolute;width:420px;height:420px;border-radius:50%;
+  background:rgba(37,99,235,.18);top:-80px;left:-80px;pointer-events:none;
 }
-.wrap{position:relative;z-index:2;width:100%;max-width:420px}
+.brand-top{position:relative;z-index:1}
+.logo-row{display:flex;align-items:center;gap:14px;margin-bottom:48px}
+.logo-mark{
+  width:48px;height:48px;border-radius:var(--r-md);background:#2563EB;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+  box-shadow:0 8px 20px rgba(37,99,235,.35);
+}
+.logo-name{font-size:22px;font-weight:700;letter-spacing:-.02em}
+.logo-ver{font-size:12px;color:#94A3B8;font-weight:500;margin-top:2px}
+.brand-title{font-size:32px;font-weight:700;letter-spacing:-.03em;line-height:1.3;margin-bottom:14px;max-width:380px}
+.brand-desc{font-size:14.5px;color:#CBD5E1;line-height:1.8;max-width:360px;font-weight:400}
+.brand-foot{position:relative;z-index:1;font-size:12px;color:#94A3B8}
+.form-pane{display:flex;align-items:center;justify-content:center;padding:32px 24px}
 .card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  padding:40px 36px 32px;
-  box-shadow:var(--shadow);
+  width:100%;max-width:400px;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--r-lg);padding:32px 28px;box-shadow:var(--shadow);
 }
-.brand{display:flex;align-items:center;gap:14px;margin-bottom:32px}
-.brand-mark{
-  width:48px;height:48px;border-radius:14px;
-  display:flex;align-items:center;justify-content:center;
-  background:var(--accent);color:#fff;
-  font-size:20px;
-  box-shadow:0 10px 24px rgba(61,79,95,.18);
-}
-.brand-name{font-size:18px;font-weight:700;letter-spacing:-.02em}
-.brand-sub{font-size:11.5px;color:var(--muted);margin-top:2px;font-weight:500}
-h1{font-size:26px;font-weight:700;letter-spacing:-.03em;margin-bottom:8px}
-.sub{font-size:13.5px;color:var(--muted);line-height:1.7;margin-bottom:28px;font-weight:400}
-.field{margin-bottom:18px}
-label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:8px}
+.card h1{font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:8px}
+.sub{font-size:13.5px;color:var(--muted);margin-bottom:28px;line-height:1.7}
+label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:8px}
 .inp-wrap{position:relative}
 .inp-wrap .ic{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px;pointer-events:none}
 input{
-  width:100%;height:50px;border-radius:14px;
-  border:1px solid var(--line);background:transparent;
-  padding:0 44px 0 16px;font-family:inherit;font-size:14px;color:var(--ink);
-  outline:none;transition:border-color .2s, box-shadow .2s, background .2s;
+  width:100%;height:48px;border-radius:var(--r-md);border:1px solid var(--line);
+  background:var(--card);padding:0 44px 0 16px;font-family:inherit;font-size:14px;color:var(--ink);
+  outline:none;transition:border-color var(--t),box-shadow var(--t),background var(--t);
 }
-input:focus{border-color:rgba(61,79,95,.35);box-shadow:0 0 0 4px var(--accent-soft);background:rgba(255,255,255,.4)}
+input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
 input::placeholder{color:var(--muted);opacity:.7}
 .btn{
-  width:100%;height:50px;border:none;border-radius:14px;
-  background:var(--accent);color:#fff;
-  font-family:inherit;font-size:14px;font-weight:600;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
-  transition:transform .15s, opacity .15s, box-shadow .2s;
-  box-shadow:0 12px 28px rgba(61,79,95,.2);
+  width:100%;height:48px;margin-top:16px;border:none;border-radius:var(--r-md);
+  background:var(--accent);color:#fff;font-family:inherit;font-size:14.5px;font-weight:600;
+  cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  transition:background var(--t),transform var(--t),box-shadow var(--t);
+  box-shadow:0 4px 14px rgba(37,99,235,.28);
 }
-.btn:hover{transform:translateY(-1px)}
-.btn:active{transform:translateY(0) scale(.99)}
-.btn:disabled{opacity:.65;cursor:not-allowed;transform:none}
+.btn:hover{background:var(--accent-hover);transform:translateY(-1px)}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
 .err{
-  display:none;align-items:center;gap:8px;
-  background:var(--err-bg);color:var(--err);
-  border:1px solid rgba(155,77,60,.15);
-  border-radius:12px;padding:12px 14px;font-size:12.5px;font-weight:500;
-  margin-bottom:16px;
+  display:none;align-items:center;gap:8px;padding:10px 12px;border-radius:var(--r-sm);
+  background:var(--err-bg);color:var(--err);font-size:13px;font-weight:500;margin-bottom:16px;
 }
 .err.show{display:flex}
-.footer{margin-top:22px;text-align:center;font-size:11.5px;color:var(--muted);font-weight:500}
+.footer{margin-top:24px;text-align:center;font-size:12px;color:var(--muted);font-weight:500}
 @keyframes spin{to{transform:rotate(360deg)}}
-@media (max-width:480px){
-  .card{padding:30px 22px 24px;border-radius:18px}
-  h1{font-size:22px}
-}
 </style>
 </head>
 <body>
-<div class="stage"></div>
-<div class="wrap">
-  <div class="card">
-    <div class="brand">
-      <div class="brand-mark"><i class="ti ti-network"></i></div>
-      <div>
-        <div class="brand-name">OXNET</div>
-        <div class="brand-sub login-version-pill">OXNET Stable · v2.0.10</div>
-      </div>
-    </div>
-    <h1>ورود به پنل</h1>
-    <p class="sub">برای دسترسی به داشبورد مدیریت، رمز عبور خود را وارد کنید.</p>
-    <div class="err" id="err"><i class="ti ti-alert-circle"></i><span id="err-text"></span></div>
-    <form id="form">
-      <div class="field">
-        <label>رمز عبور</label>
-        <div class="inp-wrap">
-          <input type="password" id="pw" placeholder="رمز عبور را وارد کنید" autofocus required autocomplete="current-password">
-          <i class="ti ti-lock ic"></i>
+<div class="shell">
+  <div class="brand-pane">
+    <div class="brand-top">
+      <div class="logo-row">
+        <div class="logo-mark"><i class="ti ti-network"></i></div>
+        <div>
+          <div class="logo-name">OXNET</div>
+          <div class="logo-ver">Stable · v2.0.11</div>
         </div>
       </div>
-      <button class="btn" type="submit" id="btn"><i class="ti ti-login-2"></i> ورود به داشبورد</button>
-    </form>
-    <div class="footer">OXNET · 2.0.10</div>
+      <div class="brand-title">مدیریت سریع، تمیز و چندپروتکل</div>
+      <p class="brand-desc">پنل کنترل برای کانفیگ‌ها، سابسکریپشن‌ها و مانیتورینگ ترافیک — با طراحی ساده و حرفه‌ای.</p>
+    </div>
+    <div class="brand-foot">OXNET Control Panel</div>
+  </div>
+  <div class="form-pane">
+    <div class="card">
+      <h1>ورود به پنل</h1>
+      <p class="sub">رمز عبور مدیریت را وارد کنید تا وارد داشبورد شوید.</p>
+      <div class="err" id="err"><i class="ti ti-alert-circle"></i><span id="err-text"></span></div>
+      <form id="form">
+        <div class="field">
+          <label>رمز عبور</label>
+          <div class="inp-wrap">
+            <input type="password" id="pw" placeholder="رمز عبور را وارد کنید" autofocus required autocomplete="current-password">
+            <i class="ti ti-lock ic"></i>
+          </div>
+        </div>
+        <button class="btn" type="submit" id="btn"><i class="ti ti-login-2"></i> ورود به داشبورد</button>
+      </form>
+      <div class="footer">OXNET · 2.0.11</div>
+    </div>
   </div>
 </div>
 <script>
@@ -183,8 +149,6 @@ document.getElementById('form').addEventListener('submit',async e=>{
 </body>
 </html>
 """
-
-
 
 DASHBOARD_HTML = r"""<!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -1272,6 +1236,108 @@ body{
 }
 .dash-protocol b{display:block;font-size:13px;font-weight:700;color:var(--t1)}
 .dash-protocol span{display:block;font-size:11px;color:var(--t3);margin-top:2px}
+
+/* ===== Multi-protocol group cards (was missing CSS) ===== */
+.links-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.multi-group-card{
+  background:var(--card);
+  border:1px solid var(--card-b);
+  border-radius:14px;
+  padding:0;
+  overflow:hidden;
+  box-shadow:0 8px 20px rgba(15,23,42,.05);
+  transition:border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+}
+.multi-group-card:hover{
+  border-color:var(--card-bh);
+  box-shadow:0 10px 24px rgba(15,23,42,.07);
+  transform:translateY(-2px);
+}
+.multi-group-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+  padding:16px 16px 12px;flex-wrap:wrap;
+}
+.multi-group-title{
+  font-size:15px;font-weight:700;color:var(--t1);display:flex;align-items:center;gap:8px;letter-spacing:-.02em;
+}
+.multi-group-title i{color:var(--accent);font-size:18px}
+.multi-protos{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.multi-protos span{
+  font-size:11px;font-weight:500;color:var(--t2);
+  background:var(--bg);border:1px solid var(--card-b);
+  border-radius:10px;padding:4px 8px;
+}
+.multi-group-card .utxt{
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:12px 16px 16px;border-top:1px solid var(--card-b);
+  font-size:11.5px;color:var(--t3);font-weight:500;
+}
+.multi-group-card .utxt span:last-child{
+  font-family:ui-monospace,monospace;color:var(--accent);word-break:break-all;font-size:11px;
+}
+.badge.bg-blue{background:var(--accent-d);color:var(--accent)}
+
+/* ===== Design system refinements ===== */
+:root{
+  --r-sm:10px; --r-md:14px; --r-lg:18px;
+  --shadow:0 8px 20px rgba(15,23,42,.05) !important;
+  --t:200ms ease;
+}
+body{
+  background:linear-gradient(180deg,#F8FAFC,#EEF2F7) !important;
+  transition:background var(--t),color var(--t);
+}
+[data-theme="dark"] body{
+  background:linear-gradient(180deg,#0B1220,#111827) !important;
+}
+.card,.stat-card,.cfg-card,.sub-card,.srv-panel,.pw-panel,.row-item,.dash-main-card,.dash-kpi,.dash-protocol,.multi-group-card{
+  border-radius:var(--r-md) !important;
+  box-shadow:0 8px 20px rgba(15,23,42,.05) !important;
+}
+.btn,.btn-p,.btn-g,.btn-o,.btn-d,.btn-sm{
+  border-radius:12px !important;
+  transition:background var(--t),color var(--t),border-color var(--t),transform var(--t),box-shadow var(--t),opacity var(--t) !important;
+  font-weight:600 !important;
+}
+.btn-p{background:var(--accent) !important;color:#fff !important;box-shadow:0 4px 12px rgba(37,99,235,.25) !important}
+.btn-p:hover{background:var(--accent2) !important}
+.btn-g,.btn-o{background:transparent !important;border:1px solid var(--card-b) !important;color:var(--t2) !important}
+.btn-g:hover,.btn-o:hover{background:var(--accent-d) !important;color:var(--accent) !important;border-color:transparent !important}
+.nav-it{
+  transition:background var(--t),color var(--t),border-color var(--t) !important;
+  border-right:3px solid transparent !important;
+}
+.nav-it.on{
+  background:#EFF6FF !important;
+  color:var(--accent) !important;
+  border-right:3px solid var(--accent) !important;
+  box-shadow:none !important;
+}
+.nav-it.on i{color:var(--accent) !important}
+[data-theme="dark"] .nav-it.on{
+  background:#172554 !important;
+  color:#93C5FD !important;
+  border-right-color:#3B82F6 !important;
+}
+[data-theme="dark"] .nav-it.on i{color:#93C5FD !important}
+.nav-it.on .nav-badge{background:rgba(37,99,235,.12) !important;color:var(--accent) !important}
+/* icon boxes only on dashboard KPIs */
+.dash-kpi-icon,.dash-protocol i{background:var(--accent-d) !important;color:var(--accent) !important}
+.card-title i,.tb-title i{background:transparent !important;color:var(--accent) !important}
+.sub-card-top{background:var(--card) !important}
+.sub-card-top::before{display:none !important}
+.sub-card-icon{
+  background:var(--accent-d) !important;color:var(--accent) !important;
+  box-shadow:none !important;
+}
+.sub-card-icon i{color:var(--accent) !important}
+.sub-card-url-row{
+  background:var(--bg) !important;
+  border:1px solid var(--card-b) !important;
+  border-radius:var(--r-sm) !important;
+}
+.sub-card-url-text{color:var(--t2) !important}
+.dash-main-card::before{background:var(--accent) !important}
 </style>
 </head>
 <body>

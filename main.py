@@ -974,17 +974,14 @@ def _config_ports_for_proto(proto: str) -> tuple[int, ...]:
     return (443, 80)
 
 def _share_lines_for_all_domains(uid: str, link: dict, host: str) -> list[str]:
-    """کانفیگ‌های یک لینک برای دامنه اصلی + کلادفلیر + دامنه‌های فرعی — هم پورت 443 (HTTPS) و هم 80 (HTTP)."""
+    """کانفیگ‌های یک لینک برای دامنه اصلی + کلادفلیر + دامنه‌های فرعی — با پورت 443 (HTTPS)."""
     proto = link.get("protocol", DEFAULT_PROTOCOL)
     label = link.get("label", "")
     lines: list[str] = []
     if proto == "mtproto":
         lines.append(generate_share_link(uid, host, remark=f"OXNET-{label}", protocol=proto))
         return lines
-    ports = (443, 80)
-    # دامنه اصلی پنل
-    for port in ports:
-        lines.append(generate_share_link(uid, host, remark=f"OXNET-{label}", protocol=proto, port=port))
+    lines.append(generate_share_link(uid, host, remark=f"OXNET-{label}", protocol=proto))
     # دامنه‌های Cloudflare (با IP تمیز یا خود دامنه)
     for cf in _cf_domains():
         domain = cf.get("domain") or ""
@@ -994,16 +991,14 @@ def _share_lines_for_all_domains(uid: str, link: dict, host: str) -> list[str]:
         targets = clean_ips if clean_ips else [domain]
         for target in targets:
             remark = f"OXNET-CF-{domain}-{label}" + (f"-{target}" if clean_ips else "")
-            for port in ports:
-                lines.append(generate_share_link(uid, target, remark=remark, protocol=proto, sni_host=domain, port=port))
+            lines.append(generate_share_link(uid, target, remark=remark, protocol=proto, sni_host=domain))
     # دامنه‌های فرعی
     for ed in _extra_domains():
         domain = ed.get("domain") or ""
         if not domain:
             continue
         remark = f"OXNET-{domain}-{label}"
-        for port in ports:
-            lines.append(generate_share_link(uid, domain, remark=remark, protocol=proto, sni_host=domain, port=port))
+        lines.append(generate_share_link(uid, domain, remark=remark, protocol=proto, sni_host=domain))
     return lines
 
 def domain_sub_urls_for_key(host: str, uuid_key: str) -> dict:
@@ -1094,8 +1089,7 @@ async def cloudflare_subscription(key: str):
             continue
         for target in targets:
             remark = f"OXNET-CF-{domain}-{link.get('label','')}" + (f"-{target}" if clean_ips else "")
-            for port in (443, 80):
-                lines.append(generate_share_link(uid, target, remark=remark, protocol=proto, sni_host=domain, port=port))
+            lines.append(generate_share_link(uid, target, remark=remark, protocol=proto, sni_host=domain))
     content=base64.b64encode("\n".join(lines).encode()).decode()
     return Response(content=content, media_type="text/plain", headers={"profile-title": quote(f"OXNET Cloudflare {domain}")})
 
@@ -1129,8 +1123,7 @@ async def cloudflare_group_subscription(key: str, uuid_key: str, request: Reques
                 continue
             for target in targets:
                 remark=f"OXNET-CF-{domain}-{link.get('label','')}" + (f"-{target}" if clean_ips else "")
-                for port in (443, 80):
-                    lines.append(generate_share_link(lid, target, remark=remark, protocol=proto, sni_host=domain, port=port))
+                lines.append(generate_share_link(lid, target, remark=remark, protocol=proto, sni_host=domain))
     content=base64.b64encode("\n".join(lines).encode()).decode()
     return Response(content=content, media_type="text/plain", headers={"profile-title": quote(f"{sub.get('name','OXNET')} Cloudflare {domain}")})
 
@@ -1200,8 +1193,7 @@ async def domain_sub_main(uuid_key: str, request: Request):
             link = LINKS.get(lid)
             if link and is_link_allowed(link):
                 proto = link.get("protocol", DEFAULT_PROTOCOL)
-                for port in (443, 80):
-                    lines.append(generate_share_link(lid, host, remark=f"OXNET-{link['label']}", protocol=proto, port=port))
+                lines.append(generate_share_link(lid, host, remark=f"OXNET-{link['label']}", protocol=proto))
     content = base64.b64encode("\n".join(lines).encode()).decode()
     return Response(content=content, media_type="text/plain", headers={
         "profile-title": quote(f"{sub.get('name','OXNET')} Main"),
@@ -1226,8 +1218,7 @@ async def domain_sub_extra_all(key: str):
         proto = link.get("protocol", DEFAULT_PROTOCOL)
         if proto == "mtproto":
             continue
-        for port in (443, 80):
-            lines.append(generate_share_link(uid, domain, remark=f"OXNET-{domain}-{link.get('label','')}", protocol=proto, sni_host=domain, port=port))
+        lines.append(generate_share_link(uid, domain, remark=f"OXNET-{domain}-{link.get('label','')}", protocol=proto, sni_host=domain))
     content = base64.b64encode("\n".join(lines).encode()).decode()
     return Response(content=content, media_type="text/plain", headers={"profile-title": quote(f"OXNET {domain}")})
 
@@ -1256,8 +1247,7 @@ async def domain_sub_extra_group(key: str, uuid_key: str, request: Request):
             proto = link.get("protocol", DEFAULT_PROTOCOL)
             if proto == "mtproto":
                 continue
-            for port in (443, 80):
-                lines.append(generate_share_link(lid, domain, remark=f"OXNET-{domain}-{link.get('label','')}", protocol=proto, sni_host=domain, port=port))
+            lines.append(generate_share_link(lid, domain, remark=f"OXNET-{domain}-{link.get('label','')}", protocol=proto, sni_host=domain))
     content = base64.b64encode("\n".join(lines).encode()).decode()
     return Response(content=content, media_type="text/plain", headers={
         "profile-title": quote(f"{sub.get('name','OXNET')} {domain}"),
