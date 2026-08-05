@@ -414,9 +414,20 @@ def get_login_path() -> str:
     return normalize_login_path(panel.get("login_path") or "")
 
 
-def get_login_url() -> str:
+def get_panel_base() -> str:
+    """Prefix for panel routes when secret path is set, e.g. /mysecret"""
     slug = get_login_path()
-    return f"/{slug}/login" if slug else "/login"
+    return f"/{slug}" if slug else ""
+
+
+def get_login_url() -> str:
+    base = get_panel_base()
+    return f"{base}/login" if base else "/login"
+
+
+def get_dashboard_url() -> str:
+    base = get_panel_base()
+    return f"{base}/dashboard" if base else "/dashboard"
 
 
 def get_host() -> str:
@@ -1703,7 +1714,7 @@ async def public_sub_data(uuid_key: str, request: Request):
 # ══════════════════════════════════════════════════════════════════════════════
 @app.get("/api/settings")
 async def api_settings(_=Depends(require_auth)):
-    return {"settings": SETTINGS, "host": get_host(), "default_host": os.environ.get("RAILWAY_PUBLIC_DOMAIN", CONFIG["host"]), "login_url": get_login_url(), "login_path": get_login_path()}
+    return {"settings": SETTINGS, "host": get_host(), "default_host": os.environ.get("RAILWAY_PUBLIC_DOMAIN", CONFIG["host"]), "login_url": get_login_url(), "login_path": get_login_path(), "dashboard_url": get_dashboard_url(), "panel_base": get_panel_base()}
 
 @app.patch("/api/settings")
 async def api_update_settings(request: Request, _=Depends(require_auth)):
@@ -1724,6 +1735,8 @@ async def api_update_settings(request: Request, _=Depends(require_auth)):
         "host": get_host(),
         "login_url": get_login_url(),
         "login_path": get_login_path(),
+        "dashboard_url": get_dashboard_url(),
+        "panel_base": get_panel_base(),
     }
 
 @app.get("/api/customers")
@@ -1940,13 +1953,31 @@ def _not_found_html() -> HTMLResponse:
     return HTMLResponse(content=html, status_code=404)
 
 
+def _inject_panel_base(html: str) -> str:
+    base = get_panel_base()
+    boot = "<script>window.OXNET_BASE=" + repr(base) + ";window.OXNET_LOGIN=" + repr(get_login_url()) + ";window.OXNET_DASH=" + repr(get_dashboard_url()) + ";</script>"
+    if "<head>" in html:
+        return html.replace("<head>", "<head>" + boot, 1)
+    return boot + html
+
+
 @app.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request):
     if get_login_path():
         return _not_found_html()
     if await is_valid_session(request.cookies.get(SESSION_COOKIE)):
-        return RedirectResponse("/dashboard", status_code=302)
-    return HTMLResponse(content=render_html(LOGIN_HTML))
+        return RedirectResponse(get_dashboard_url(), status_code=302)
+    return HTMLResponse(content=_inject_panel_base(render_html(LOGIN_HTML)))
+
+
+@app.get("/dashboard", response_class=HTMLResponse)
+async def dashboard(request: Request):
+    if get_login_path():
+        return _not_found_html()
+    if not await is_valid_session(request.cookies.get(SESSION_COOKIE)):
+        return RedirectResponse(get_login_url(), status_code=302)
+    await ensure_default_link()
+    return HTMLResponse(content=_inject_panel_base(render_html(DASHBOARD_HTML)))
 
 
 @app.get("/{login_slug}/login", response_class=HTMLResponse)
@@ -1955,21 +1986,24 @@ async def custom_login_page(login_slug: str, request: Request):
     if not expected or normalize_login_path(login_slug) != expected:
         return _not_found_html()
     if await is_valid_session(request.cookies.get(SESSION_COOKIE)):
-        return RedirectResponse("/dashboard", status_code=302)
-    return HTMLResponse(content=render_html(LOGIN_HTML))
+        return RedirectResponse(get_dashboard_url(), status_code=302)
+    return HTMLResponse(content=_inject_panel_base(render_html(LOGIN_HTML)))
 
 
-@app.get("/dashboard", response_class=HTMLResponse)
-async def dashboard(request: Request):
+@app.get("/{login_slug}/dashboard", response_class=HTMLResponse)
+async def custom_dashboard(login_slug: str, request: Request):
+    expected = get_login_path()
+    if not expected or normalize_login_path(login_slug) != expected:
+        return _not_found_html()
     if not await is_valid_session(request.cookies.get(SESSION_COOKIE)):
         return RedirectResponse(get_login_url(), status_code=302)
     await ensure_default_link()
-    return HTMLResponse(content=render_html(DASHBOARD_HTML))
+    return HTMLResponse(content=_inject_panel_base(render_html(DASHBOARD_HTML)))
 
 
 @app.get("/test-ws", response_class=HTMLResponse)
 async def test_ws_redirect():
-    return HTMLResponse(content="<script>location.href='/dashboard'</script>")
+    return RedirectResponse(get_dashboard_url(), status_code=302)
 
 
 if __name__ == "__main__":

@@ -1,3 +1,3 @@
-version=2.0.15
-description=Custom secret login path, login theme follows admin preference, 404 on /login when custom path set
-updated_at=1785765000
+version=2.0.16
+description=Secret path for login+dashboard, protocol picker UX, muted tags
+updated_at=1785768000
