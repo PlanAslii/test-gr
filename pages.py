@@ -1764,6 +1764,119 @@ body{
 
 .tb-title{font-size:20px !important;font-weight:700 !important;letter-spacing:-.02em}
 .tb-sub{font-size:13px !important;color:var(--t2) !important}
+
+/* ===== Protocol Selection Tiles (iOS / Linear style) ===== */
+.cm-opt-grid{display:flex;flex-direction:column;gap:8px;width:100%}
+.cm-dd-list .cm-opt-grid{padding:4px 0}
+.cm-opt{
+  display:flex !important;
+  align-items:center !important;
+  gap:12px !important;
+  padding:10px 12px !important;
+  margin:0 !important;
+  margin-bottom:0 !important;
+  border-radius:12px !important;
+  border:1px solid var(--card-b) !important;
+  background:var(--card) !important;
+  box-shadow:none !important;
+  transform:none !important;
+  cursor:pointer;
+  min-height:0 !important;
+  transition:background 180ms ease, border-color 180ms ease !important;
+}
+.cm-opt:hover{
+  background:#F8FAFC !important;
+  border-color:#CBD5E1 !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+.cm-opt.sel,
+.cm-opt.on,
+.cm-opt.selected,
+.cm-opt.active{
+  background:#EFF6FF !important;
+  border-color:#2563EB !important;
+  box-shadow:none !important;
+}
+[data-theme="dark"] .cm-opt{
+  background:#1E293B !important;
+  border-color:#334155 !important;
+}
+[data-theme="dark"] .cm-opt:hover{
+  background:#243044 !important;
+  border-color:#475569 !important;
+}
+[data-theme="dark"] .cm-opt.sel,
+[data-theme="dark"] .cm-opt.on,
+[data-theme="dark"] .cm-opt.selected{
+  background:rgba(37,99,235,.12) !important;
+  border-color:#3B82F6 !important;
+}
+.cm-opt-radio{
+  width:16px !important;height:16px !important;min-width:16px !important;
+  border-radius:50% !important;
+  border:2px solid #CBD5E1 !important;
+  background:transparent !important;
+  flex-shrink:0 !important;
+  display:flex !important;align-items:center;justify-content:center;
+  margin:0 !important;
+  transition:border-color 180ms ease !important;
+}
+.cm-opt.sel .cm-opt-radio{border-color:#2563EB !important}
+[data-theme="dark"] .cm-opt-radio{border-color:#64748B !important}
+[data-theme="dark"] .cm-opt.sel .cm-opt-radio{border-color:#60A5FA !important}
+.cm-opt-radio::after{
+  content:'' !important;
+  width:8px !important;height:8px !important;
+  border-radius:50% !important;
+  background:#2563EB !important;
+  transform:scale(0) !important;
+  transition:transform 180ms ease !important;
+  display:block !important;
+}
+.cm-opt.sel .cm-opt-radio::after{transform:scale(1) !important}
+[data-theme="dark"] .cm-opt-radio::after{background:#60A5FA !important}
+.cm-opt-icon{display:none !important}
+.cm-opt-body,.cm-opt-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.cm-opt-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.cm-opt-title{
+  font-size:13.5px !important;
+  font-weight:600 !important;
+  color:var(--t1) !important;
+  letter-spacing:-.01em !important;
+  line-height:1.3 !important;
+}
+.cm-opt-desc{
+  font-size:11.5px !important;
+  color:var(--t2) !important;
+  line-height:1.45 !important;
+  margin:0 !important;
+  font-weight:400 !important;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.cm-opt-tag{
+  font-size:10px !important;
+  font-weight:600 !important;
+  padding:2px 7px !important;
+  border-radius:999px !important;
+  background:#EFF6FF !important;
+  color:#2563EB !important;
+  flex-shrink:0 !important;
+  letter-spacing:0 !important;
+  line-height:1.4 !important;
+}
+[data-theme="dark"] .cm-opt-tag{
+  background:rgba(37,99,235,.15) !important;
+  color:#93C5FD !important;
+}
+.cm-opt-tag.rec{
+  background:#EFF6FF !important;
+  color:#2563EB !important;
+}
+[data-theme="dark"] .cm-opt-tag.rec{
+  background:rgba(37,99,235,.15) !important;
+  color:#93C5FD !important;
+}
 </style>
 </head>
 <body>
@@ -1818,34 +1931,42 @@ body{
             <i class="ti ti-chevron-down cm-dd-chev"></i>
           </div>
           <div class="cm-dd-panel"><div class="cm-dd-panel-inner"><div class="cm-dd-list">
+            <div class="cm-opt-grid">
             <div class="cm-opt sel" data-base="vless" onclick="cmSelectBase('vless',this)">
               <div class="cm-opt-radio"></div>
-              <div class="cm-opt-icon"><i class="ti ti-bolt"></i></div>
-              <div class="cm-opt-text"><div class="cm-opt-title">VLESS</div><div class="cm-opt-desc">سبک، سریع و پرکاربردترین گزینه</div></div>
-              <span class="cm-opt-tag" rec">گزینه پیش‌فرض</span>
+              <div class="cm-opt-body">
+                <div class="cm-opt-row"><span class="cm-opt-title">VLESS</span><span class="cm-opt-tag rec">Recommended</span></div>
+                <div class="cm-opt-desc">سبک، سریع و مناسب اکثر کاربران</div>
+              </div>
             </div>
             <div class="cm-opt" data-base="trojan" onclick="cmSelectBase('trojan',this)">
               <div class="cm-opt-radio"></div>
-              <div class="cm-opt-icon"><i class="ti ti-shield-lock"></i></div>
-              <div class="cm-opt-text"><div class="cm-opt-title">Trojan</div><div class="cm-opt-desc">شبیه‌سازی ترافیک HTTPS معمولی</div></div>
+              <div class="cm-opt-body">
+                <div class="cm-opt-row"><span class="cm-opt-title">Trojan</span></div>
+                <div class="cm-opt-desc">شبیه‌سازی ترافیک HTTPS</div>
+              </div>
             </div>
             <div class="cm-opt" data-base="multi" onclick="cmSelectBase('multi',this)">
               <div class="cm-opt-radio"></div>
-              <div class="cm-opt-icon"><i class="ti ti-layers-intersect"></i></div>
-              <div class="cm-opt-text"><div class="cm-opt-title">Multi Protocol</div><div class="cm-opt-desc">ساخت یک ساب شامل همه پروتکل‌ها، بدون پروکسی تلگرام</div></div>
-              <span class="cm-opt-tag">همه در یک ساب</span>
+              <div class="cm-opt-body">
+                <div class="cm-opt-row"><span class="cm-opt-title">Multi Protocol</span><span class="cm-opt-tag">All-in-one</span></div>
+                <div class="cm-opt-desc">همه پروتکل‌ها در یک ساب</div>
+              </div>
             </div>
             <div class="cm-opt" data-base="shadowsocks" onclick="cmSelectBase('shadowsocks',this)">
               <div class="cm-opt-radio"></div>
-              <div class="cm-opt-icon"><i class="ti ti-lock-bolt"></i></div>
-              <div class="cm-opt-text"><div class="cm-opt-title">Shadowsocks TLS</div><div class="cm-opt-desc">شادوساکس روی TLS/WebSocket با مسیر اختصاصی</div></div>
-              <span class="cm-opt-tag">TLS</span>
+              <div class="cm-opt-body">
+                <div class="cm-opt-row"><span class="cm-opt-title">Shadowsocks</span><span class="cm-opt-tag">TLS</span></div>
+                <div class="cm-opt-desc">روی TLS / WebSocket</div>
+              </div>
             </div>
             <div class="cm-opt" data-base="telproxy" onclick="cmSelectBase('telproxy',this)">
               <div class="cm-opt-radio"></div>
-              <div class="cm-opt-icon"><i class="ti ti-brand-telegram"></i></div>
-              <div class="cm-opt-text"><div class="cm-opt-title">Telegram Proxy</div><div class="cm-opt-desc">ساخت MTProto روی پورت داخلی</div></div>
-              <span class="cm-opt-tag">MTProto</span>
+              <div class="cm-opt-body">
+                <div class="cm-opt-row"><span class="cm-opt-title">Telegram Proxy</span><span class="cm-opt-tag">MTProto</span></div>
+                <div class="cm-opt-desc">پروکسی تلگرام روی پورت داخلی</div>
+              </div>
+            </div>
             </div></div></div>
           </div>
         </div>
@@ -1860,9 +1981,27 @@ body{
             <i class="ti ti-chevron-down cm-dd-chev"></i>
           </div>
           <div class="cm-dd-panel" id="dd-transport"><div class="cm-dd-panel-inner"><div class="cm-dd-list">
-            <div class="cm-opt sel" onclick="cmSelectTransport('ws',this)"><div class="cm-opt-radio"></div><div class="cm-opt-icon"><i class="ti ti-link"></i></div><div class="cm-opt-text"><div class="cm-opt-title">WebSocket</div><div class="cm-opt-desc">پایدارترین حالت عمومی</div></div></div>
-            <div class="cm-opt" onclick="cmSelectTransport('xhttp-packet-up',this)"><div class="cm-opt-radio"></div><div class="cm-opt-icon"><i class="ti ti-package"></i></div><div class="cm-opt-text"><div class="cm-opt-title">XHTTP packet-up</div><div class="cm-opt-desc">سازگار با CDN و پروکسی‌ها</div></div></div>
-            <div class="cm-opt" onclick="cmSelectTransport('xhttp-stream-up',this)"><div class="cm-opt-radio"></div><div class="cm-opt-icon"><i class="ti ti-rocket"></i></div><div class="cm-opt-text"><div class="cm-opt-title">XHTTP stream-up</div><div class="cm-opt-desc">تاخیر کمتر برای شبکه پایدار</div></div></div>
+            <div class="cm-opt sel" onclick="cmSelectTransport('ws',this)">
+              <div class="cm-opt-radio"></div>
+              <div class="cm-opt-body">
+                <div class="cm-opt-row"><span class="cm-opt-title">WebSocket</span></div>
+                <div class="cm-opt-desc">پایدارترین حالت عمومی</div>
+              </div>
+            </div>
+            <div class="cm-opt" onclick="cmSelectTransport('xhttp-packet-up',this)">
+              <div class="cm-opt-radio"></div>
+              <div class="cm-opt-body">
+                <div class="cm-opt-row"><span class="cm-opt-title">XHTTP packet-up</span></div>
+                <div class="cm-opt-desc">سازگار با CDN و پروکسی</div>
+              </div>
+            </div>
+            <div class="cm-opt" onclick="cmSelectTransport('xhttp-stream-up',this)">
+              <div class="cm-opt-radio"></div>
+              <div class="cm-opt-body">
+                <div class="cm-opt-row"><span class="cm-opt-title">XHTTP stream-up</span></div>
+                <div class="cm-opt-desc">تاخیر کمتر برای شبکه پایدار</div>
+              </div>
+            </div>
           </div></div></div>
         </div>
 
