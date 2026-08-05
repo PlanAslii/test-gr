@@ -1237,6 +1237,121 @@ body{
 .dash-protocol b{display:block;font-size:13px;font-weight:700;color:var(--t1)}
 .dash-protocol span{display:block;font-size:11px;color:var(--t3);margin-top:2px}
 
+
+
+.fallback-bars{display:flex;align-items:flex-end;gap:6px;height:200px;padding:8px 4px}
+.fallback-bars span{flex:1;background:rgba(37,99,235,.35);border-radius:6px 6px 2px 2px;min-height:4px;transition:height 200ms ease}
+.fallback-protos{display:flex;flex-direction:column;gap:10px;padding:8px 0}
+.fallback-protos .fp-row{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--t2)}
+.fallback-protos .fp-bar{flex:1;height:8px;background:var(--bg3);border-radius:999px;overflow:hidden}
+.fallback-protos .fp-bar i{display:block;height:100%;background:var(--accent);border-radius:999px}
+/* ===== Dashboard charts + section cards (were missing layout CSS) ===== */
+.dash-chart-grid{
+  display:grid;
+  grid-template-columns:1.6fr 1fr;
+  gap:16px;
+  margin:16px 0 16px;
+}
+@media(max-width:960px){.dash-chart-grid{grid-template-columns:1fr}}
+.dash-chart-card{
+  background:var(--card);
+  border:1px solid var(--card-b);
+  border-radius:14px;
+  padding:16px 16px 12px;
+  box-shadow:0 8px 20px rgba(15,23,42,.05);
+  min-height:0;
+}
+.dash-card-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+.dash-card-title{
+  font-size:14px;
+  font-weight:700;
+  color:var(--t1);
+  display:flex;
+  align-items:center;
+  gap:8px;
+  letter-spacing:-.02em;
+}
+.dash-card-title i{color:var(--accent);font-size:16px}
+.dash-card-sub{
+  font-size:12px;
+  color:var(--t3);
+  margin-top:4px;
+  font-weight:400;
+}
+.dash-chart-card .ch{
+  position:relative;
+  height:240px;
+  width:100%;
+}
+.dash-chart-card .ch-sm{
+  position:relative;
+  height:220px;
+  width:100%;
+  max-width:280px;
+  margin:0 auto;
+}
+.dash-chart-card canvas{
+  width:100% !important;
+  height:100% !important;
+}
+/* health / summary cards polish */
+#pg-overview .g2{gap:16px;margin-bottom:8px}
+#pg-overview .card{
+  background:var(--card);
+  border:1px solid var(--card-b);
+  border-radius:14px;
+  padding:16px 18px;
+  box-shadow:0 8px 20px rgba(15,23,42,.05);
+}
+#pg-overview .card-title{
+  font-size:14px;font-weight:700;color:var(--t1);
+  margin-bottom:12px;display:flex;align-items:center;gap:8px;
+}
+#pg-overview .card-title i{color:var(--accent)}
+#pg-overview .sr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid var(--card-b);font-size:13px;
+}
+#pg-overview .sr:last-child{border-bottom:none}
+#pg-overview .sr-k{color:var(--t2);display:flex;align-items:center;gap:8px;font-weight:500}
+#pg-overview .sr-k i{color:var(--t3);font-size:15px}
+#pg-overview .sr-v{color:var(--t1);font-weight:600;font-size:12.5px}
+.spbar{
+  height:6px;border-radius:999px;background:var(--bg3);
+  overflow:hidden;margin-top:6px;
+}
+.spfill{
+  height:100%;border-radius:999px;background:var(--accent);
+  transition:width 200ms ease;
+}
+#lsummary .row-item,
+#lsummary .ls-row{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 0;border-bottom:1px solid var(--card-b);font-size:13px;
+}
+#lsummary .ls-row:last-child{border-bottom:none}
+/* vless box polish */
+.vless-box{
+  background:var(--card);
+  border:1px solid var(--card-b);
+  border-radius:14px;
+  padding:16px 18px;
+  margin:16px 0;
+  box-shadow:0 8px 20px rgba(15,23,42,.05);
+}
+.vl-header{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap;
+}
+.vl-title{
+  font-size:14px;font-weight:700;color:var(--t1);display:flex;align-items:center;gap:8px;
+}
+.vl-title i{color:var(--accent)}
 /* ===== Multi-protocol group cards (was missing CSS) ===== */
 .links-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
 .multi-group-card{
@@ -3013,77 +3128,98 @@ function makeGradient(ctx,color1,color2){
 }
 function initCharts(){
   if(typeof Chart==='undefined'){setupFallbackCharts();return;}
-  const c1=document.getElementById('ch1').getContext('2d');
-  const grad1=makeGradient(c1,'rgba(37,99,235,.38)','rgba(37,99,235,0)');
-  const opts={
-    responsive:true,maintainAspectRatio:false,
-    interaction:{mode:'index',intersect:false},
-    plugins:{
-      legend:{display:false},
-      tooltip:{
-        backgroundColor:'rgba(13,27,46,.96)',borderColor:'rgba(37,99,235,.18)',borderWidth:1,
-        titleColor:'#E8F4FF',bodyColor:'#7BAED4',padding:11,cornerRadius:10,displayColors:false,
-        titleFont:{family:'Vazirmatn',size:11,weight:'700'},bodyFont:{family:'Vazirmatn',size:11},
-        callbacks:{label:v=>`${v.parsed.y.toFixed(2)} مگابایت`}
-      }
-    },
-    scales:{
-      x:{grid:{display:false},border:{display:false},ticks:{color:'#3D6B8E',font:{size:9,family:'Vazirmatn'}}},
-      y:{grid:{color:'rgba(37,99,235,.06)'},border:{display:false},ticks:{color:'#3D6B8E',font:{size:9,family:'Vazirmatn'},callback:v=>v+' MB'}}
-    },
-    elements:{line:{capBezierPoints:true}}
-  };
-  const ds1={label:'MB',data:[],borderColor:'#2563EB',backgroundColor:grad1,fill:true,tension:.42,pointRadius:0,pointHoverRadius:6,pointHoverBackgroundColor:'#2563EB',pointHoverBorderColor:'#fff',pointHoverBorderWidth:2,borderWidth:2.5};
-  ch1=new Chart(document.getElementById('ch1'),{type:'line',data:{labels:[],datasets:[ds1]},options:opts});
+  try{
+    const el1=document.getElementById('ch1');
+    const el2=document.getElementById('ch2');
+    const el3=document.getElementById('ch3');
+    if(!el1 && !el2 && !el3) return;
 
-  function makeGradientV2(ctx,c1,c2,c3){
-    const g=ctx.createLinearGradient(0,0,0,320);
-    g.addColorStop(0,c1);g.addColorStop(.6,c2);g.addColorStop(1,c3);
-    return g;
-  }
-  const c3ctx=document.getElementById('ch3').getContext('2d');
-  const gradFill3=makeGradientV2(c3ctx,'rgba(37,99,235,.45)','rgba(37,99,235,.08)','rgba(37,99,235,0)');
-  ch3=new Chart(document.getElementById('ch3'),{
-    type:'line',
-    data:{labels:[],datasets:[
-      {label:'مصرف',data:[],borderColor:'#2563EB',backgroundColor:gradFill3,fill:true,tension:.45,pointRadius:0,pointHoverRadius:7,pointHoverBackgroundColor:'#fff',pointHoverBorderColor:'#2563EB',pointHoverBorderWidth:3,borderWidth:3,order:2},
-      {label:'میانگین',data:[],borderColor:'#F59E0B',borderDash:[6,5],borderWidth:1.6,pointRadius:0,fill:false,tension:0,order:1}
-    ]},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      interaction:{mode:'index',intersect:false},
-      plugins:{
-        legend:{display:false},
-        tooltip:{
-          backgroundColor:'rgba(13,27,46,.97)',borderColor:'rgba(37,99,235,.2)',borderWidth:1,
-          titleColor:'#E8F4FF',bodyColor:'#9DC3E8',padding:13,cornerRadius:12,displayColors:true,boxPadding:4,
-          titleFont:{family:'Vazirmatn',size:11.5,weight:'700'},bodyFont:{family:'Vazirmatn',size:11},
-          callbacks:{label:v=>` ${v.dataset.label}: ${v.parsed.y.toFixed(2)} MB`}
+    const tick = '#94A3B8';
+    const grid = 'rgba(37,99,235,.06)';
+    const tipBg = 'rgba(15,23,42,.96)';
+
+    if(el1){
+      const c1=el1.getContext('2d');
+      const grad1=makeGradient(c1,'rgba(37,99,235,.15)','rgba(37,99,235,0)');
+      const opts={
+        responsive:true,maintainAspectRatio:false,
+        interaction:{mode:'index',intersect:false},
+        plugins:{
+          legend:{display:false},
+          tooltip:{
+            backgroundColor:tipBg,borderColor:'rgba(37,99,235,.15)',borderWidth:1,
+            titleColor:'#F8FAFC',bodyColor:'#CBD5E1',padding:10,cornerRadius:10,displayColors:false,
+            titleFont:{family:'Vazirmatn',size:11,weight:'700'},bodyFont:{family:'Vazirmatn',size:11},
+            callbacks:{label:v=>`${v.parsed.y.toFixed(2)} مگابایت`}
+          }
+        },
+        scales:{
+          x:{grid:{display:false},border:{display:false},ticks:{color:tick,font:{size:9,family:'Vazirmatn'}}},
+          y:{grid:{color:grid},border:{display:false},ticks:{color:tick,font:{size:9,family:'Vazirmatn'},callback:v=>v+' MB'}}
+        },
+        elements:{line:{capBezierPoints:true}}
+      };
+      const ds1={label:'MB',data:[],borderColor:'#2563EB',backgroundColor:grad1,fill:true,tension:.4,pointRadius:0,pointHoverRadius:5,pointHoverBackgroundColor:'#2563EB',pointHoverBorderColor:'#fff',pointHoverBorderWidth:2,borderWidth:3};
+      ch1=new Chart(el1,{type:'line',data:{labels:[],datasets:[ds1]},options:opts});
+    }
+
+    if(el3){
+      const c3ctx=el3.getContext('2d');
+      function makeGradientV2(ctx,a,b,c){
+        const g=ctx.createLinearGradient(0,0,0,320);
+        g.addColorStop(0,a);g.addColorStop(.6,b);g.addColorStop(1,c);
+        return g;
+      }
+      const gradFill3=makeGradientV2(c3ctx,'rgba(37,99,235,.15)','rgba(37,99,235,.05)','rgba(37,99,235,0)');
+      ch3=new Chart(el3,{
+        type:'line',
+        data:{labels:[],datasets:[
+          {label:'مصرف',data:[],borderColor:'#2563EB',backgroundColor:gradFill3,fill:true,tension:.4,pointRadius:0,pointHoverRadius:5,pointHoverBackgroundColor:'#fff',pointHoverBorderColor:'#2563EB',pointHoverBorderWidth:2,borderWidth:3,order:2},
+          {label:'میانگین',data:[],borderColor:'#D97706',borderDash:[6,5],borderWidth:1.5,pointRadius:0,fill:false,tension:0,order:1}
+        ]},
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          interaction:{mode:'index',intersect:false},
+          plugins:{
+            legend:{display:false},
+            tooltip:{
+              backgroundColor:tipBg,borderColor:'rgba(37,99,235,.15)',borderWidth:1,
+              titleColor:'#F8FAFC',bodyColor:'#CBD5E1',padding:10,cornerRadius:10,displayColors:true,boxPadding:4,
+              titleFont:{family:'Vazirmatn',size:11,weight:'700'},bodyFont:{family:'Vazirmatn',size:11},
+              callbacks:{label:v=>` ${v.dataset.label}: ${v.parsed.y.toFixed(2)} MB`}
+            }
+          },
+          scales:{
+            x:{grid:{display:false},border:{display:false},ticks:{color:tick,font:{size:9,family:'Vazirmatn'}}},
+            y:{grid:{color:grid},border:{display:false},ticks:{color:tick,font:{size:9,family:'Vazirmatn'},callback:v=>v+' MB'}}
+          }
         }
-      },
-      scales:{
-        x:{grid:{display:false},border:{display:false},ticks:{color:'#3D6B8E',font:{size:9.5,family:'Vazirmatn'},maxRotation:0}},
-        y:{grid:{color:'rgba(37,99,235,.05)'},border:{display:false},ticks:{color:'#3D6B8E',font:{size:9.5,family:'Vazirmatn'},callback:v=>v+' MB'}}
-      }
+      });
     }
-  });
 
-  ch2=new Chart(document.getElementById('ch2'),{
-    type:'doughnut',
-    data:{labels:['VLESS WS','Trojan WS','XHTTP','Shadowsocks TLS','MTProto'],datasets:[{
-      data:[1,1,1,1,1],
-      backgroundColor:['var(--accent)','#111827','#8B5CF6','#14B8A6','#F59E0B'],
-      borderColor:getComputedStyle(document.documentElement).getPropertyValue('--card')||'#0d1b2e',
-      borderWidth:4,hoverOffset:10,borderRadius:6,spacing:3
-    }]},
-    options:{
-      responsive:true,maintainAspectRatio:false,cutout:'72%',
-      plugins:{
-        legend:{position:'bottom',labels:{color:'var(--t2)',font:{size:10,family:'Vazirmatn'},padding:12,usePointStyle:true,pointStyle:'circle'}},
-        tooltip:{backgroundColor:'rgba(13,27,46,.96)',borderColor:'rgba(37,99,235,.18)',borderWidth:1,padding:10,cornerRadius:10,bodyFont:{family:'Vazirmatn'},titleFont:{family:'Vazirmatn'}}
-      }
+    if(el2){
+      const cardBg=(getComputedStyle(document.documentElement).getPropertyValue('--card')||'#FFFFFF').trim()||'#FFFFFF';
+      ch2=new Chart(el2,{
+        type:'doughnut',
+        data:{labels:['VLESS WS','Trojan WS','XHTTP','Shadowsocks','MTProto'],datasets:[{
+          data:[1,1,1,1,1],
+          backgroundColor:['#2563EB','#16A34A','#0EA5E9','#D97706','#94A3B8'],
+          borderColor:cardBg,
+          borderWidth:3,hoverOffset:6,borderRadius:6,spacing:2
+        }]},
+        options:{
+          responsive:true,maintainAspectRatio:false,cutout:'72%',
+          plugins:{
+            legend:{position:'bottom',labels:{color:'#6B7280',font:{size:10,family:'Vazirmatn'},padding:12,usePointStyle:true,pointStyle:'circle'}},
+            tooltip:{backgroundColor:tipBg,borderColor:'rgba(37,99,235,.15)',borderWidth:1,padding:10,cornerRadius:10}
+          }
+        }
+      });
     }
-  });
+  }catch(e){
+    console.error('initCharts',e);
+    setupFallbackCharts();
+  }
 }
 const ICON_MAP={ad:'ti-speakerphone',news:'ti-news',warning:'ti-alert-triangle',urgent:'ti-alert-octagon'};
 const LABEL_MAP={ad:'تبلیغ',news:'خبر',warning:'هشدار',urgent:'فوری'};
